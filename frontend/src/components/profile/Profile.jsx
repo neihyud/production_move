@@ -1,8 +1,9 @@
 import './profile.css';
 import avatar from '../../assets/landing.jpg';
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
+import { AuthContext } from '../../contexts/AuthContext';
 
-const Profile = ({ title }) => {
+const Profile = () => {
     const [showProfile, setShowProfile] = useState(false);
     const [editProfile, setEditProfile] = useState(false);
 
@@ -14,14 +15,22 @@ const Profile = ({ title }) => {
         setEditProfile(!editProfile);
     };
 
+    const {
+        authState: { user },
+    } = useContext(AuthContext);
+
+    let { role } = user ? user : { role: '' };
+
+    let title = user.username;
+    role = role + ' Manager';
     return (
         <>
             {/* onClick={toggleShowProfile} */}
             <div className="top" title={title} onClick={toggleShowProfile}>
                 <img className="avatar" src={avatar} alt="" />
                 <div className="name hide">
-                    <span>Admin</span>
-                    <span className='role'>Admin Manager</span>
+                    <span>{title}</span>
+                    <span className="role">{role}</span>
                 </div>
             </div>
 
@@ -29,7 +38,7 @@ const Profile = ({ title }) => {
                 <div className="model">
                     <div onClick={toggleShowProfile} className="overlay"></div>
                     <div className="content">
-                        <div className="avatarWrapper">
+                        <div className="avatar-wrapper">
                             <img className="avatar2" src={avatar} alt="" />
                         </div>
                     </div>

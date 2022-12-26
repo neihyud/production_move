@@ -12,7 +12,7 @@ module.exports = {
         return res.status(200).json({ success: true, message: 'Get Success', accounts })
     },
 
-    // [POST] /admin/account/create
+    // [POST] /admin/account
     createAccount: async (req, res) => {
         try {
             const { role = '', username = '', password = '' } = req.body
@@ -41,7 +41,7 @@ module.exports = {
 
     },
 
-    // [POST] /admin/account/create
+    // [POST] /admin/account
     updateAccount: async (req, res) => {
         try {
             const { role = '', username = '' } = req.body
@@ -53,7 +53,7 @@ module.exports = {
                     .json({ success: false, message: 'Username is required' })
             }
 
-            let updatedAccount = await Account.findOneAndUpdate({ username }, { role })
+            let updatedAccount = await Account.findOneAndUpdate({ username }, { role }, { new: true }).lean()
 
             if (!updatedAccount) {
                 return res.status(401).json({

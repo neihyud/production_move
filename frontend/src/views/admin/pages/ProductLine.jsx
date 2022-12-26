@@ -1,6 +1,6 @@
 import './page.css';
 import '../../../assets/css/common.css';
-import Sidebar from '../sidebar/Sidebar';
+import SidebarAdmin from '../SidebarAdmin';
 import Navbar from '../../../components/navbar/Navbar';
 import Table from '../../../components/table/Table';
 import Spinner from 'react-bootstrap/Spinner';
@@ -31,7 +31,7 @@ export default function Products() {
         deleteProductline,
         showToast: { show, message, type },
         setShowToast,
-        adminState: { productlines, productlineLoading },
+        adminState: { productLines, productLineLoading },
     } = useContext(AdminContext);
 
     const {
@@ -49,18 +49,18 @@ export default function Products() {
 
     const columns = [
         { headerName: 'Id', field: 'id', flex: 1 },
-        { headerName: 'Code', field: 'code', flex: 1, headerAlign: 'center', align: 'center' },
+        { headerName: 'Code', field: 'code', width: 150, headerAlign: 'center', align: 'center' },
         {
             headerName: 'Name',
             field: 'productLine',
-            width: 150,
+            width: 200,
             headerAlign: 'center',
             align: 'center',
         },
         {
             headerName: 'Description',
             field: 'description',
-            width: 150,
+            flex: 1,
             headerAlign: 'center',
             align: 'center',
         },
@@ -129,7 +129,7 @@ export default function Products() {
     };
 
     let body = null;
-    if (productlineLoading) {
+    if (productLineLoading) {
         body = (
             <div className="spinner-container">
                 <Spinner animation="border" variant="info" />
@@ -140,7 +140,7 @@ export default function Products() {
             <Table
                 {...{
                     columns,
-                    rows: productlines,
+                    rows: productLines,
                 }}
             />
         );
@@ -159,13 +159,12 @@ export default function Products() {
             message,
             type: success ? 'success' : 'danger',
         });
-        console.log('error: ', error);
         reset(data);
     };
 
     const argsModal = {
-        title: 'Remove productline',
-        body: 'Do you want to delete this productline?',
+        title: 'Remove productLine',
+        body: 'Do you want to delete this productLine?',
         handleDelete,
         setShowModal,
         showModal,
@@ -182,7 +181,7 @@ export default function Products() {
 
     return (
         <div className="wrapper-body">
-            <Sidebar />
+            <SidebarAdmin />
             <div className="wrapper-content">
                 <Navbar title="Product Line" />
                 <div className="group-btn">

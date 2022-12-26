@@ -26,7 +26,6 @@ const AuthContextProvider = ({ children }) => {
                     type: 'SET_AUTH',
                     payload: {
                         isAuthenticated: true,
-                        role: response.data.user.role,
                         user: response.data.user,
                     },
                 });
@@ -66,7 +65,7 @@ const AuthContextProvider = ({ children }) => {
 
             return data;
         } catch (error) {
-            if (error.data) return error.data; // get error from backend
+            if (error.response) return error.response.data; // get error from backend
             else return { success: false, message: error.message };
         }
     };

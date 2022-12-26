@@ -5,12 +5,11 @@ export const apiUrl =
 
 export const LOCAL_STORAGE_TOKEN_NAME = 'learnit-mern'
 
-export const POSTS_LOADED_SUCCESS = 'POSTS_LOADED_SUCCESS'
-export const POSTS_LOADED_FAIL = 'POSTS_LOADED_FAIL'
-export const ADD_POST = 'ADD_POST'
-export const DELETE_POST = 'DELETE_POST'
-export const UPDATE_POST = 'UPDATE_POST'
-export const FIND_POST = 'FIND_POST'
+// Role
+export const ROLE_ADMIN = 'admin'
+export const ROLE_MANUFACTURE = 'manufacture'
+export const ROLE_AGENT = 'agent'
+export const ROLE_WARRANTY_CENTER = 'warranty-center'
 
 // Admin - account
 export const ACCOUNT_LOADED_SUCCESS = "ACCOUNT_LOADED_SUCCESS"
@@ -27,3 +26,11 @@ export const ADD_PRODUCTLINE = "ADD_PRODUCTLINE"
 export const DELETE_PRODUCTLINE = "DELETE_PRODUCTLINE"
 export const FIND_PRODUCTLINE = "FIND_PRODUCTLINE"
 export const UPDATE_PRODUCTLINE = "UPDATE_PRODUCTLINE"
+
+// Manufacture - product
+export const PRODUCT_LOADED_SUCCESS = "PRODUCT_LOADED_SUCCESS"
+export const PRODUCT_LOADED_FAIL = "PRODUCT_LOADED_FAIL"
+export const ADD_PRODUCT = "ADD_PRODUCT"
+export const DELETE_PRODUCT = "DELETE_PRODUCT"
+export const FIND_PRODUCT = "FIND_PRODUCT"
+export const UPDATE_PRODUCT = "UPDATE_PRODUCT"

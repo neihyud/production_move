@@ -3,21 +3,21 @@ const ProductLine = require('../../models/ProductLine')
 
 module.exports = {
 
-    // [GET] /admin/productlines
+    // [GET] /admin/productLines
     getProductLines: async (req, res) => {
-        const productlines = await ProductLine.find({}).lean()
+        const productLines = await ProductLine.find({}).lean()
 
-        return res.status(200).json({ success: true, message: 'Get ProductLine Success', productlines })
+        return res.status(200).json({ success: true, message: 'Get ProductLine Success', productLines })
     },
 
-    // [POST] /admin/productlines
+    // [POST] /admin/productLines
     createProductLine: async (req, res) => {
         try {
             const { code = '', productLine = '', description = '' } = req.body;
 
-            const _productline = await ProductLine.findOne({ code }).select('code').lean()
+            const _productLine = await ProductLine.findOne({ code }).select('code').lean()
 
-            if (_productline) {
+            if (_productLine) {
                 return res.status(400).json({ success: false, message: 'ProductLine is exist' })
             }
 
@@ -27,18 +27,18 @@ module.exports = {
 
             await newProductline.save()
 
-            return res.status(200).json({ success: true, message: 'Created ProductLine Success', productline: newProductline })
+            return res.status(200).json({ success: true, message: 'Created ProductLine Success', productLine: newProductline })
         } catch (error) {
             res.status(500).json({ success: false, message: 'Internal Error', error })
         }
     },
 
-    // [PUT] /admin/productlines/:id
+    // [PUT] /admin/productLines/:id
     updateProductLine: async (req, res) => {
         try {
             const { code = '', productLine = '', description = '' } = req.body
 
-            let updatedProductLine = await ProductLine.findOneAndUpdate({ code }, { productLine, description }).lean()
+            let updatedProductLine = await ProductLine.findOneAndUpdate({ code }, { productLine, description }, { new: true }).lean()
 
             if (!updatedProductLine) {
                 return res.status(401).json({
@@ -46,28 +46,31 @@ module.exports = {
                     message: 'ProducLine not found'
                 })
             }
-            res.status(200).json({ success: true, message: 'Update ProductLine Success', productline: updatedProductLine })
+            res.status(200).json({ success: true, message: 'Update ProductLine Success', productLine: updatedProductLine })
 
         } catch (error) {
             res.status(500).json({ success: false, message: 'Internal Error', error })
         }
-
-
     },
 
-    // [PUT] /admin/productlines/:id
+    // [DELETE] /admin/productLine/:id
     deleteProductLine: async (req, res) => {
-        const _id = req.params.id
+        try {
+            const { id: _id } = req.params
 
-        const productline = new ProductLine.find({ _id })
+            const productLine = await ProductLine.findOne({ _id })
 
-        if (!productline) {
-            res.status(400).json({ success: false, message: 'Productline is not exist' })
+            if (!productLine) {
+                return res.status(400).json({ success: false, message: 'Productline is not exist' })
+            }
+
+            await productLine.deleteOne({ _id })
+
+            res.status(200).json({ success: true, message: 'Delete Success' })
+
+        } catch (error) {
+            res.status(500).json({ success: false, message: 'Internal Error', error })
         }
-
-        await productline.deleteOne({ _id })
-
-        res.status(200).json({ success: true, message: 'Delete Success' })
 
     }
 

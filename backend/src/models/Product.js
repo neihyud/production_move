@@ -1,37 +1,57 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
+const { STATUS_PRODUCT_AGENT,
+    STATUS_PRODUCT_ERROR_FACTORY,
+    STATUS_PRODUCT_ERROR_MANUFACTURE,
+    STATUS_PRODUCT_ERROR_RECALL,
+    STATUS_PRODUCT_ERROR_WARRANTY,
+    STATUS_PRODUCT_EXPIRE_WARRANTY,
+    STATUS_PRODUCT_FIXING,
+    STATUS_PRODUCT_NEW,
+    STATUS_PRODUCT_RETURN_CUSTOMER,
+    STATUS_PRODUCT_RETURN_MANUFACTURE,
+    STATUS_PRODUCT_SOLD,
+    STATUS_PRODUCT_WARRANTY_DONE } = require('../constants/index.js')
+
 const ProductSchema = new Schema({
     productName: {
         type: String,
         require: true
     },
     productLine: {
-        type: mongoose.Types.ObjectId,
-        ref: 'ProductLine',
+        type: String,
+        required: true
+    },
+    price: {
+        type: String,
         required: true
     },
     status: {
         type: String,
         enum: [
-            'mới sản xuât', 'đại lý',
-            'đã bán', 'lỗi, cần bảo hành',
-            'đang sửa chữa bảo hành',
-            'đã bảo hành xong',
-            'đã trả lại bảo hành cho khách hàng',
-            'lỗi, cần trả về nhà máy',
-            'lỗi, cần đưa về cơ sở sản xuất',
-            'lỗi, cần triệu hồi',
-            'hết thời gian bảo hành',
-            'trả lại cơ sở sản xuất'
+            STATUS_PRODUCT_NEW,
+            STATUS_PRODUCT_AGENT,
+            STATUS_PRODUCT_ERROR_FACTORY,
+            STATUS_PRODUCT_ERROR_MANUFACTURE,
+            STATUS_PRODUCT_ERROR_RECALL,
+            STATUS_PRODUCT_ERROR_WARRANTY,
+            STATUS_PRODUCT_EXPIRE_WARRANTY,
+            STATUS_PRODUCT_FIXING,
+            STATUS_PRODUCT_RETURN_CUSTOMER,
+            STATUS_PRODUCT_RETURN_MANUFACTURE,
+            STATUS_PRODUCT_SOLD,
+            STATUS_PRODUCT_WARRANTY_DONE
         ],
-        default: 'mới sản xuất'
+        default: STATUS_PRODUCT_NEW
     },
     note: {
-        type: String
+        type: Object,
+        default: {}
     },
     imageUri: {
-        type: String
+        type: String,
+        default: 'https://cdn.honda.com.vn/motorbikes/December2022/kIs5EUI938YVxyeVrpeA.png'
     },
     warrantyPeriod: {
         type: String,
@@ -40,6 +60,10 @@ const ProductSchema = new Schema({
     numberWarranty: {
         type: Number,
         default: 0
+    },
+    quantity: {
+        type: Number,
+        default: 1
     }
 }, { timestamps: true })
 

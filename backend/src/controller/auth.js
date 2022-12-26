@@ -6,7 +6,7 @@ const config = require('../config/index')
 exports.login = async (req, res) => {
     const { username = '', password = '' } = req.body
 
-    const account = await Account.findOne({ username })
+    const account = await Account.findOne({ username }).lean()
     if (!account) {
         return res.status(400).json({ success: false, message: 'Account not found' })
     }

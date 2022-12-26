@@ -1,8 +1,11 @@
 .sidebar {
     flex: 1;
     min-height: 100vh;
-    padding: 30px 15px;
+    padding: 35px 15px;
     background-color: #f8f8fa;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
 }
 
 ul {
@@ -17,7 +20,7 @@ li {
     display: flex;
     align-items: center;
     padding-top: 10px;
-    padding-left: 30px;
+    padding-left: 20px;
     padding-bottom: 10px;
     cursor: pointer;
 }
@@ -28,27 +31,38 @@ ul :hover {
 }
 
 .logout {
-    margin-top: 280px;
     cursor: pointer;
 }
 
 .logout :hover {
     background: #e2f0ed;
+    border-radius: 8px;
 }
 
 .logout > div {
+    display: flex;
+    align-items: center;
     padding-top: 10px;
     padding-bottom: 10px;
+    padding-left: -20px;
+}
+
+.top {
+    display: flex;
+    align-items: center;
+    padding-left: 20px;
+    cursor: pointer;
+    border-radius: 8px;
 }
 
 .icon,
-.iconlogout {
+.icon-logout {
     color: var(--second-color);
     font-size: 25px;
 }
 
-.iconlogout {
-    margin-left: 30px;
+.icon-logout {
+    margin-left: 20px;
 }
 
 span {
@@ -81,13 +95,16 @@ a.active > li span {
         padding-left: 0;
     }
 
-    .logoutWrap {
-        display: flex;
-        align-items: center;
+    .logout > div {
+        padding-left: 0;
         justify-content: center;
     }
 
-    .iconlogout {
+    .icon-logout {
         margin-left: 0;
+    }
+
+    .top {
+        padding-left: 0;
     }
 }

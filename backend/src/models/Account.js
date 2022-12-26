@@ -4,7 +4,7 @@ const Schema = mongoose.Schema
 const AccountSchema = new Schema({
     role: {
         type: String,
-        enum: ['admin', 'warranty-center', 'manufacturing', 'agent'],
+        enum: ['admin', 'warranty-center', 'manufacture', 'agent'],
         default: 'product'
     },
     username: {

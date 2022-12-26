@@ -46,6 +46,7 @@ export const adminReducer = (state, action) => {
             return { ...state, account: payload };
 
         case UPDATE_ACCOUNT:
+            console.log('payload: ', payload);
             const newAccounts = state.accounts.map((account) =>
                 account._id === payload._id ? { ...payload, id: payload._id } : account,
             );
@@ -58,39 +59,39 @@ export const adminReducer = (state, action) => {
         case PRODUCTLINE_LOADED_SUCCESS:
             return {
                 ...state,
-                productlines: payload,
-                productlineLoading: false,
+                productLines: payload,
+                productLineLoading: false,
             };
 
         case PRODUCTLINE_LOADED_FAIL:
             return {
                 ...state,
                 accounts: [],
-                productlineLoading: false,
+                productLineLoading: false,
             };
         case ADD_PRODUCTLINE:
             return {
                 ...state,
-                productlines: [...state.productlines, { ...payload, id: payload._id }],
+                productLines: [...state.productLines, { ...payload, id: payload._id }],
             };
 
         case DELETE_PRODUCTLINE:
             return {
                 ...state,
-                productlines: state.productlines.filter((account) => account._id != payload),
+                productLines: state.productLines.filter((account) => account._id != payload),
             };
 
         case FIND_PRODUCTLINE:
             return { ...state, account: payload };
 
         case UPDATE_PRODUCTLINE:
-            const newProductLine = state.productlines.map((productline) =>
-                productline._id === payload._id ? { ...payload, id: payload._id } : productline,
+            const newProductLine = state.productLines.map((productLine) =>
+                productLine._id === payload._id ? { ...payload, id: payload._id } : productLine,
             );
 
             return {
                 ...state,
-                productlines: newProductLine,
+                productLines: newProductLine,
             };
         default:
             return state;

@@ -25,9 +25,9 @@ const AdminContextProvider = ({ children }) => {
         account: null,
         accounts: [],
         accountLoading: true,
-        productline: null,
-        productlines: [],
-        productlineLoading: true,
+        productLine: null,
+        productLines: [],
+        productLineLoading: true,
     });
 
     const [showToast, setShowToast] = React.useState({
@@ -52,13 +52,15 @@ const AdminContextProvider = ({ children }) => {
 
     const addAccount = async (newAccount) => {
         try {
-            const { data = {} } = await axios.post(`${apiUrl}/admin/account/create`, newAccount);
+            const { data = {} } = await axios.post(`${apiUrl}/admin/account`, newAccount);
             if (data.success) {
                 dispatch({ type: ADD_ACCOUNT, payload: data.account });
                 return data;
             }
         } catch (error) {
-            return error.response.data ? error.response.data : { success: false, message: 'Server error' };
+            return error.response
+                ? error.response.data
+                : { success: false, message: 'Server error' };
         }
     };
 
@@ -73,7 +75,9 @@ const AdminContextProvider = ({ children }) => {
                 return data;
             }
         } catch (error) {
-            return error.response.data ? error.response.data : { success: false, message: 'Server error' };
+            return error.response
+                ? error.response.data
+                : { success: false, message: 'Server error' };
         }
     };
 
@@ -85,17 +89,19 @@ const AdminContextProvider = ({ children }) => {
                 return data;
             }
         } catch (error) {
-            return error.response.data ? error.response.data : { success: false, message: 'Server error' };
+            return error.response
+                ? error.response.data
+                : { success: false, message: 'Server error' };
         }
     };
 
     const getProductlines = async () => {
         try {
-            const { data = {} } = await axios.get(`${apiUrl}/admin/productline`);
+            const { data = {} } = await axios.get(`${apiUrl}/admin/productLine`);
             if (data.success) {
                 dispatch({
                     type: PRODUCTLINE_LOADED_SUCCESS,
-                    payload: validateData(data.productlines),
+                    payload: validateData(data.productLines),
                 });
             }
         } catch (error) {
@@ -105,45 +111,48 @@ const AdminContextProvider = ({ children }) => {
 
     const addProductline = async (newProductline) => {
         try {
-            const { data = {} } = await axios.post(
-                `${apiUrl}/admin/productline/create`,
-                newProductline,
-            );
+            const { data = {} } = await axios.post(`${apiUrl}/admin/productLine`, newProductline);
             if (data.success) {
-                dispatch({ type: ADD_PRODUCTLINE, payload: data.productline });
+                dispatch({ type: ADD_PRODUCTLINE, payload: data.productLine });
                 return data;
             }
         } catch (error) {
-            return error.response.data ? error.response.data : { success: false, message: 'Server error' };
+            return error.response
+                ? error.response.data
+                : { success: false, message: 'Server error' };
         }
     };
 
-    const updateProductline = async (productline) => {
+    const updateProductline = async (productLine) => {
         try {
             const { data = {} } = await axios.put(
-                `${apiUrl}/admin/productline/:${productline.id}`,
-                productline,
+                `${apiUrl}/admin/productLine/:${productLine.id}`,
+                productLine,
             );
             if (data.success) {
-                dispatch({ type: UPDATE_PRODUCTLINE, payload: data.productline });
+                dispatch({ type: UPDATE_PRODUCTLINE, payload: data.productLine });
                 return data;
             }
         } catch (error) {
-            return error.response.data ? error.response.data : { success: false, message: 'Server error' };
+            return error.response
+                ? error.response.data
+                : { success: false, message: 'Server error' };
         }
     };
 
-    const deleteProductline = async (productlineId) => {
+    const deleteProductline = async (productLineId) => {
         try {
             const { data = {} } = await axios.delete(
-                `${apiUrl}/admin/productline/${productlineId}`,
+                `${apiUrl}/admin/productLine/${productLineId}`,
             );
             if (data.success) {
-                dispatch({ type: DELETE_PRODUCTLINE, payload: productlineId });
+                dispatch({ type: DELETE_PRODUCTLINE, payload: productLineId });
                 return data;
             }
         } catch (error) {
-            return error.response.data ? error.response.data : { success: false, message: 'Server error' };
+            return error.response
+                ? error.response.data
+                : { success: false, message: 'Server error' };
         }
     };
 

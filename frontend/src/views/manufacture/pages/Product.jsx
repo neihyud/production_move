@@ -1,37 +1,45 @@
 import './page.css';
 import '../../../assets/css/common.css';
-import SidebarAdmin from '../SidebarAdmin';
+import SidebarManufacture from '../SidebarManufacture';
 import Navbar from '../../../components/navbar/Navbar';
 import Table from '../../../components/table/Table';
-import ModalAccount from '../../../components/modal/ModalAccount';
 import Spinner from 'react-bootstrap/Spinner';
 import Toast from 'react-bootstrap/Toast';
 
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/DeleteOutlined';
-import { GridActionsCellItem, GridRowModes } from '@mui/x-data-grid';
+import { GridActionsCellItem } from '@mui/x-data-grid';
 
 import React from 'react';
 import { useState, useEffect, useContext } from 'react';
 import { useForm } from 'react-hook-form';
+import { ManufactureContext } from '../../../contexts/ManufactureContext';
+import { AuthContext } from '../../../contexts/AuthContext';
 import ModalMessage from '../../../components/layout/ModalMessage';
-import { AdminContext } from '../../../contexts/AdminContext';
+import ModalProduct from '../../../components/modal/ModalProduct';
 
 export default function Products() {
     const [showCreate, setShowCreate] = useState(false);
     const [showModal, setShowModal] = React.useState(false);
     const [isEdit, setIsEdit] = React.useState(false);
+
     let idRef = React.useRef(0);
 
     const {
-        getAccounts,
-        addAccount,
-        updateAccount,
-        deleteAccount,
+        getProducts,
+        addProduct,
+        updateProduct,
+        deleteProduct,
         showToast: { show, message, type },
         setShowToast,
-        adminState: { accounts, accountLoading },
-    } = useContext(AdminContext);
+        manufactureState: { products, productLoading },
+    } = useContext(ManufactureContext);
+
+    const {
+        authState: {
+            user: { username: code },
+        },
+    } = useContext(AuthContext);
 
     const {
         register,
@@ -42,17 +50,43 @@ export default function Products() {
     } = useForm();
 
     useEffect(() => {
-        getAccounts();
+        getProducts(code);
         return () => {};
     }, []);
 
     const columns = [
         { headerName: 'Id', field: 'id', flex: 1 },
-        { headerName: 'Name', field: 'username', flex: 1, headerAlign: 'center', align: 'center' },
-        { headerName: 'Role', field: 'role', width: 150, headerAlign: 'center', align: 'center' },
+        {
+            headerName: 'Name',
+            field: 'productName',
+            width: 150,
+            headerAlign: 'center',
+            align: 'center',
+        },
+        {
+            headerName: 'Price',
+            field: 'price',
+            flex: 1,
+            headerAlign: 'center',
+            align: 'center',
+        },
+        {
+            headerName: 'Quantity',
+            field: 'quantity',
+            flex: 1,
+            headerAlign: 'center',
+            align: 'center',
+        },
         {
             headerName: 'Status',
             field: 'status',
+            width: 150,
+            headerAlign: 'center',
+            align: 'center',
+        },
+        {
+            headerName: 'Note',
+            field: 'note',
             width: 150,
             headerAlign: 'center',
             align: 'center',
@@ -89,20 +123,20 @@ export default function Products() {
         setIsEdit(true);
 
         // goi query den database => lay gia tri r dien vao
-        setValue('username', row.username);
-        setValue('password', '');
-        setValue('role', row.role);
+        setValue('code', row.code);
+        setValue('product', row.product);
+        setValue('description', row.description);
     };
 
     const handleDeleteClick = (id) => () => {
-        console.log(id);
+        console.log('delete product', id);
         setShowModal(true);
         idRef.current = id;
     };
 
     const handleDelete = async () => {
         const id = idRef.current || 1;
-        const { success, message } = await deleteAccount(id);
+        const { success, message } = await deleteProduct(code, id);
         setShowToast({
             success,
             message,
@@ -117,12 +151,12 @@ export default function Products() {
         reset({
             name: '',
             password: '',
-            role: 'admin',
+            role: 'manufacture',
         });
     };
 
     let body = null;
-    if (accountLoading) {
+    if (productLoading) {
         body = (
             <div className="spinner-container">
                 <Spinner animation="border" variant="info" />
@@ -133,7 +167,8 @@ export default function Products() {
             <Table
                 {...{
                     columns,
-                    rows: accounts,
+                    rows: products,
+                    checkboxSelection: true,
                 }}
             />
         );
@@ -142,7 +177,9 @@ export default function Products() {
     // Submit btn
     const onSubmit = async (data) => {
         console.log('data: ', data);
-        const { success, message } = isEdit ? await updateAccount(data) : await addAccount(data);
+        const { success, message, error } = isEdit
+            ? await updateProduct(code, data)
+            : await addProduct(code, data);
 
         setShowCreate(false);
         setShowToast({
@@ -150,19 +187,18 @@ export default function Products() {
             message,
             type: success ? 'success' : 'danger',
         });
-
         reset(data);
     };
 
     const argsModal = {
-        title: 'Remove account',
-        body: 'Do you want to delete this account?',
+        title: 'Remove product',
+        body: 'Do you want to delete this product?',
         handleDelete,
         setShowModal,
         showModal,
     };
 
-    const argsModalProductLine = {
+    const argsModalProduct = {
         toggleShowCreate,
         handleSubmit,
         register,
@@ -173,22 +209,22 @@ export default function Products() {
 
     return (
         <div className="wrapper-body">
-            <SidebarAdmin />
+            <SidebarManufacture />
             <div className="wrapper-content">
-                <Navbar title="Account" />
+                <Navbar title="Product Line" />
                 <div className="group-btn">
                     <div className="center">
                         <input type="text" className="input" />
                         <button className="c-btn">Search</button>
                     </div>
                     <button className="btn btn-success" onClick={toggleShowCreate}>
-                        Add Account
+                        Add Product
                     </button>
                 </div>
 
                 {body}
 
-                {showCreate && <ModalAccount {...argsModalProductLine} />}
+                {showCreate && <ModalProduct {...argsModalProduct} />}
 
                 {showModal && <ModalMessage {...argsModal} />}
             </div>

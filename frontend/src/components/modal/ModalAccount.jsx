@@ -19,15 +19,21 @@ const ModalAccount = ({
                 ) : (
                     <>
                         <span className="center title-2">Add Account</span>
-                        <label className="row">
-                            Username
-                            <input
-                                {...register('username', { required: true })}
-                                placeholder="Name"
-                                className="input"
-                            />
-                        </label>
-                        {errors.username && <span className="error">This field is required</span>}
+                    </>
+                )}
+                <label className="row">
+                    Username
+                    <input
+                        {...register('username', { required: true })}
+                        placeholder="Name"
+                        className="input"
+                        disabled={isEdit}
+                    />
+                </label>
+                {errors.username && <span className="error">This field is required</span>}
+
+                {!isEdit && (
+                    <>
                         <label className="row">
                             Password
                             <input
