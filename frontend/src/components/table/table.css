@@ -1,0 +1,42 @@
+.MuiDataGrid-root .MuiDataGrid-cell:focus-within,
+.MuiDataGrid-columnHeader:focus-within {
+    outline: none !important;
+}
+
+.MuiDataGrid-root {
+    z-index: 0;
+}
+
+/* width */
+.MuiDataGrid-virtualScroller::-webkit-scrollbar {
+    width: 4px;
+}
+
+.MuiDataGrid-virtualScroller {
+    height: 100%;
+    flex: 1;
+}
+
+.MuiBox-root {
+    flex: 1;
+}
+
+/* Track */
+.MuiDataGrid-virtualScroller::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+/* Handle */
+.MuiDataGrid-virtualScroller::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+/* Handle on hover */
+.MuiDataGrid-virtualScroller::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+.MuiDataGrid-menuIcon {
+    display: none !important;
+}

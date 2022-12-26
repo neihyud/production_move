@@ -1,0 +1,13 @@
+.container {
+    min-width: 100vw;
+    padding: 0;
+    color: #242d49;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+p {
+    margin: 0;
+}
