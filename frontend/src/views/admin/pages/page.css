@@ -19,7 +19,12 @@
     border-radius: 25px;
 }
 
-input::-webkit-input-placeholder, textarea::-webkit-input-placeholder {
+select option {
+    text-transform: capitalize;
+}
+
+input::-webkit-input-placeholder,
+textarea::-webkit-input-placeholder {
     /* Edge */
     color: rgba(0, 0, 0, 0.2);
 }

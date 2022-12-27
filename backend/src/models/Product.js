@@ -64,6 +64,9 @@ const ProductSchema = new Schema({
     quantity: {
         type: Number,
         default: 1
+    },
+    batchCode: {
+        type: String,
     }
 }, { timestamps: true })
 

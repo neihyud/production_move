@@ -3,6 +3,13 @@ export const apiUrl =
         ? 'http://localhost:8081'
         : 'https://sleepy-inlet-56101.herokuapp.com/api'
 
+
+// type button
+export const TYPE_ACTION_ADD = 'ADD'
+export const TYPE_ACTION_EDIT = 'EDIT'
+export const TYPE_ACTION_IMPORT = 'IMPORT'
+export const TYPE_ACTION_EXPORT = 'EXPORT'
+
 export const LOCAL_STORAGE_TOKEN_NAME = 'learnit-mern'
 
 // Role
@@ -30,7 +37,10 @@ export const UPDATE_PRODUCTLINE = "UPDATE_PRODUCTLINE"
 // Manufacture - product
 export const PRODUCT_LOADED_SUCCESS = "PRODUCT_LOADED_SUCCESS"
 export const PRODUCT_LOADED_FAIL = "PRODUCT_LOADED_FAIL"
+export const GET_PRODUCT = "GET_PRODUCT"
 export const ADD_PRODUCT = "ADD_PRODUCT"
 export const DELETE_PRODUCT = "DELETE_PRODUCT"
 export const FIND_PRODUCT = "FIND_PRODUCT"
 export const UPDATE_PRODUCT = "UPDATE_PRODUCT"
+export const EXPORT_PRODUCT = "EXPORT_PRODUCT"
+

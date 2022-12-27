@@ -5,6 +5,8 @@ import {
     DELETE_PRODUCT,
     FIND_PRODUCT,
     UPDATE_PRODUCT,
+    GET_PRODUCT,
+    EXPORT_PRODUCT,
 } from '../contexts/constants';
 
 export const manufactureReducer = (state, action) => {
@@ -23,6 +25,13 @@ export const manufactureReducer = (state, action) => {
                 accounts: [],
                 productLoading: false,
             };
+
+        case GET_PRODUCT:
+            return {
+                ...state,
+                product: payload,
+            };
+
         case ADD_PRODUCT:
             return {
                 ...state,
@@ -47,6 +56,12 @@ export const manufactureReducer = (state, action) => {
                 ...state,
                 products: newProduct,
             };
+        case EXPORT_PRODUCT: // can su de hien thi
+            return {
+                ...state,
+                products: payload,
+            };
+        // return { ...state, products: _newProduct };
         default:
             return state;
     }

@@ -6,7 +6,7 @@ import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import { useState } from 'react';
 import './table.css';
 
-const Table = ({ columns, rows, setRows, checkboxSelection, handleOnCellClick }) => {
+const Table = ({ columns, rows, checkboxSelection, handleOnCellClick, handleSelectClick }) => {
     const [pageSize, setPageSize] = useState(10);
 
     const initState = {
@@ -41,7 +41,7 @@ const Table = ({ columns, rows, setRows, checkboxSelection, handleOnCellClick })
                     onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
                     rowsPerPageOptions={[10, 20, 40]}
                     onCellClick={handleOnCellClick}
-                    onSelectionModelChange={(item) => console.log(item)}
+                    onSelectionModelChange={(item) => handleSelectClick(item)}
                 />
             </Box>
         </div>

@@ -2,6 +2,8 @@ const Product = require('../../models/Product')
 const ProductDetail = require('../../models/ProductDetail')
 const Manufacture = require('../../models/ManufacturingBase')
 
+const { STATUS_PRODUCT_AGENT } = require('../../constants/index')
+
 const validateProduct = (products) => {
     const _products = products.map((product) => {
         const status = product.status
@@ -16,14 +18,34 @@ const validateProduct = (products) => {
 module.exports = {
 
     // [GET] /manufacture/:code/product
-    getProducts: async function (req, res) {
+    getProducts: async (req, res) => {
         try {
             const { code } = req.params
             const products = await Product.find({ 'note.new': code }).lean()
 
             const _products = validateProduct(products)
-            
+
             res.status(200).json({ success: true, message: "Get Product Success", products: _products })
+        } catch (error) {
+            res.status(500).json({ success: false, message: 'Internal Error', error })
+        }
+    },
+
+    getProduct: async (req, res) => {
+        try {
+            const { code, id } = req.params
+            const product = await Product.findOne({ 'note.new': code, _id: id }).lean()
+
+            if (!product) {
+                return res.status(400).json({ success: false, message: 'Product is not exist' })
+            }
+            const productDetail = await ProductDetail.findOne({ productId: id }).select('-productId').lean()
+
+            const note = product.note[product.status]
+
+            const _product = { ...product, ...productDetail, note }
+
+            res.status(200).json({ success: true, message: "Get Product Success", product: _product })
         } catch (error) {
             res.status(500).json({ success: false, message: 'Internal Error', error })
         }
@@ -81,7 +103,59 @@ module.exports = {
 
             await _newProductDetail.save()
 
-            return res.status(200).json({ success: true, message: 'Created Product Success', product: newProduct })
+            const status = _newProduct.status
+            _newProduct = { ..._newProduct, note: _newProduct.note[status] }
+            return res.status(200).json({ success: true, message: 'Created Product Success', product: _newProduct })
+        } catch (error) {
+            res.status(500).json({ success: false, message: 'Internal Error', error })
+        }
+    },
+
+    updateProduct: async (req, res) => {
+        const { code, id } = req.params
+        try {
+            const {
+                productLine = '',
+                price = '',
+                description = '',
+                engineType = '',
+                petrolTankCapacity = '',
+                maximumCapacity = '',
+                rawMaterialConsumption = '',
+                engineOilCapacity = '',
+                sizeLongLargeHeigh = '',
+                saddleHeight = '',
+                chassisHeight = '',
+                cylinderCapacity = '',
+                bootSystem = '', productName = '', quantity = 0 } = req.body;
+
+            let updateProduct = await Product.findOneAndUpdate({ _id: id }, {
+                productName,
+                note: { new: code }, productLine, price,
+                quantity
+            }, { new: true }).lean()
+
+            if (!updateProduct) {
+                return res.status(400).json({ success: false, message: 'Product is not exist' })
+            }
+
+            await ProductDetail.updateOne({ productId: id }, {
+                description,
+                engineType,
+                petrolTankCapacity,
+                maximumCapacity,
+                rawMaterialConsumption,
+                engineOilCapacity,
+                sizeLongLargeHeigh,
+                saddleHeight,
+                chassisHeight,
+                cylinderCapacity,
+                bootSystem,
+            })
+
+            const status = updateProduct.status
+            updateProduct = { ...updateProduct, note: updateProduct.note[status] }
+            return res.status(200).json({ success: true, message: 'Update Product Success', product: updateProduct })
         } catch (error) {
             res.status(500).json({ success: false, message: 'Internal Error', error })
         }
@@ -98,6 +172,7 @@ module.exports = {
             }
 
             await product.deleteOne({ _id })
+            await ProductDetail.deleteOne({ _id })
 
             res.status(200).json({ success: true, message: 'Delete Success' })
 
@@ -106,17 +181,28 @@ module.exports = {
         }
     },
 
-    // [POST] /manufacturing-base/export
+    // [POST] /manufacture/:code/product/export
     exportProductForAgent: async (req, res) => {
-        // note: ten dai ly
-        const { productIds = [], store = '', note } = req.body;
+        try {
+            const { code } = req.params
 
-        await Product.updateMany({ _id: { $in: productIds } }, { position: store, status: 'đại lý', note })
+            const { productIds = [], agent } = req.body;
 
-        res.status(200).json({ message: 'Export product success' })
+            await Product.updateMany({ _id: { $in: productIds }, 'note.new': code }, { 'note.agent': agent, status: STATUS_PRODUCT_AGENT })
+
+
+            const products = await Product.find({ 'note.new': code }).lean()
+            const _products = validateProduct(products)
+            res.status(200).json({ success: true, message: 'Export product success', products: _products })
+
+        } catch (error) {
+            res.status(500).json({ success: false, message: 'Internal Error' })
+        }
+
+
     },
 
-    // [POST] /manufacturing-base/:id/info
+    // [POST] /manufacture/:code/product/:id/info
     updateInfo: async (req, res) => {
         const _id = req.params.id;
 
@@ -133,7 +219,7 @@ module.exports = {
         res.status(200).json({ message: 'Manufacture: update info success' })
     },
 
-    // [GET] /manufacturing-base/error-product
+    // [GET] /manufacture/:code/product/error-product
     getProductError: async (req, res) => {
         const productError = await Product.find({ status: 'Lỗi, đã đưa về cơ sở sản xuất' })
         res.status(200).json({ message: 'Get error product success', productError: productError })

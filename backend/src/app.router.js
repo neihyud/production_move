@@ -24,8 +24,12 @@ router.delete('/admin/account/:id', verifyToken, isRole('admin'), accountControl
 // Manufacture
 const manufactureController = require('./controller/manufacture/index')
 router.get('/manufacture/:code/product', manufactureController.getProducts)
+router.get('/manufacture/:code/product/:id', manufactureController.getProduct)
 router.post('/manufacture/:code/product', manufactureController.createProduct)
-router.put('/manufacture/:code/product/:id', manufactureController.createProduct)
+router.put('/manufacture/:code/product/:id', manufactureController.updateProduct)
 router.delete('/manufacture/:code/product/:id', manufactureController.deleteProduct)
+router.post('/manufacture/:code/product/export', manufactureController.exportProductForAgent)
+
+
 
 module.exports = router

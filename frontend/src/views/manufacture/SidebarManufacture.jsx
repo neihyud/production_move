@@ -28,7 +28,7 @@ export default function SidebarManufacture() {
             <NavLink style={{ textDecoration: 'none' }} to="/account">
                 <li title="account">
                     <BsPerson className="icon" />
-                    <span>Account</span>
+                    <span>Repair</span>
                 </li>
             </NavLink>
         </Sidebar>

@@ -18,21 +18,33 @@ import { AuthContext } from '../../../contexts/AuthContext';
 import ModalMessage from '../../../components/layout/ModalMessage';
 import ModalProduct from '../../../components/modal/ModalProduct';
 
+import {
+    TYPE_ACTION_ADD,
+    TYPE_ACTION_EDIT,
+    TYPE_ACTION_IMPORT,
+    TYPE_ACTION_EXPORT,
+} from '../../../contexts/constants';
+
 export default function Products() {
     const [showCreate, setShowCreate] = useState(false);
-    const [showModal, setShowModal] = React.useState(false);
-    const [isEdit, setIsEdit] = React.useState(false);
+    const [showExport, setShowExport] = useState(false);
+    const [showModal, setShowModal] = useState(false);
+    const [typeAction, setTypeAction] = useState(TYPE_ACTION_ADD);
+
+    const [selected, setSelected] = useState([]);
 
     let idRef = React.useRef(0);
 
     const {
         getProducts,
+        getProduct,
         addProduct,
         updateProduct,
         deleteProduct,
+        exportProduct,
         showToast: { show, message, type },
         setShowToast,
-        manufactureState: { products, productLoading },
+        manufactureState: { products, productLoading, product },
     } = useContext(ManufactureContext);
 
     const {
@@ -59,6 +71,13 @@ export default function Products() {
         {
             headerName: 'Name',
             field: 'productName',
+            width: 150,
+            headerAlign: 'center',
+            align: 'center',
+        },
+        {
+            headerName: 'Product Line',
+            field: 'productLine',
             width: 150,
             headerAlign: 'center',
             align: 'center',
@@ -117,15 +136,31 @@ export default function Products() {
         },
     ];
 
-    const handleEditClick = (row) => () => {
-        console.log(row.id);
+    const handleEditClick = (row) => async () => {
+        console.log('manufactureId: ', row.id);
         setShowCreate(!showCreate);
-        setIsEdit(true);
+        setTypeAction(TYPE_ACTION_EDIT);
+
+        let { product } = await getProduct(code, row.id);
 
         // goi query den database => lay gia tri r dien vao
-        setValue('code', row.code);
-        setValue('product', row.product);
-        setValue('description', row.description);
+        setValue('id', row.id);
+        setValue('productName', product.productName);
+        setValue('price', product.price);
+        setValue('productLine', product.productLine);
+        setValue('imageUri', product.imageUri);
+        setValue('quantity', product.quantity);
+        setValue('description', product.description);
+        setValue('engineType', product.engineType);
+        setValue('maximumCapacity', product.maximumCapacity);
+        setValue('engineOilCapacity', product.engineOilCapacity);
+        setValue('petrolTankCapacity', product.petrolTankCapacity);
+        setValue('rawMaterialConsumption', product.rawMaterialConsumption);
+        setValue('sizeLongLargeHeigh', product.sizeLongLargeHeigh);
+        setValue('saddleHeight', product.saddleHeight);
+        setValue('chassisHeight', product.chassisHeight);
+        setValue('cylinderCapacity', product.cylinderCapacity);
+        setValue('bootSystem', product.bootSystem);
     };
 
     const handleDeleteClick = (id) => () => {
@@ -145,14 +180,23 @@ export default function Products() {
         setShowModal(false);
     };
 
+    const handleSelectClick = (selected) => {
+        setSelected(selected);
+    };
+
     const toggleShowCreate = () => {
         setShowCreate(!showCreate);
-        setIsEdit(false);
+        setTypeAction(TYPE_ACTION_ADD);
         reset({
             name: '',
             password: '',
             role: 'manufacture',
         });
+    };
+
+    const toggleShowExport = () => {
+        setShowCreate(!showCreate);
+        setTypeAction(TYPE_ACTION_EXPORT);
     };
 
     let body = null;
@@ -169,6 +213,7 @@ export default function Products() {
                     columns,
                     rows: products,
                     checkboxSelection: true,
+                    handleSelectClick,
                 }}
             />
         );
@@ -177,9 +222,26 @@ export default function Products() {
     // Submit btn
     const onSubmit = async (data) => {
         console.log('data: ', data);
-        const { success, message, error } = isEdit
-            ? await updateProduct(code, data)
-            : await addProduct(code, data);
+
+        let _data = null;
+        switch (typeAction) {
+            case TYPE_ACTION_EDIT:
+                _data = await updateProduct(code, data);
+                break;
+            case TYPE_ACTION_ADD:
+                _data = await addProduct(code, data);
+                break;
+            case TYPE_ACTION_EXPORT:
+                _data = await exportProduct(code, selected, data);
+                break;
+            case TYPE_ACTION_IMPORT:
+                _data = await addProduct(code, data);
+                break;
+            default:
+                break;
+        }
+
+        const { success, message, error } = _data;
 
         setShowCreate(false);
         setShowToast({
@@ -188,6 +250,7 @@ export default function Products() {
             type: success ? 'success' : 'danger',
         });
         reset(data);
+        setSelected([]);
     };
 
     const argsModal = {
@@ -200,26 +263,37 @@ export default function Products() {
 
     const argsModalProduct = {
         toggleShowCreate,
+        toggleShowExport,
         handleSubmit,
         register,
         errors,
         onSubmit,
-        isEdit,
+        typeAction,
     };
 
     return (
         <div className="wrapper-body">
             <SidebarManufacture />
             <div className="wrapper-content">
-                <Navbar title="Product Line" />
+                <Navbar title="Product" />
                 <div className="group-btn">
                     <div className="center">
                         <input type="text" className="input" />
                         <button className="c-btn">Search</button>
                     </div>
-                    <button className="btn btn-success" onClick={toggleShowCreate}>
-                        Add Product
-                    </button>
+                    <div>
+                        <button
+                            className="btn btn-success"
+                            style={{ marginRight: '15px' }}
+                            onClick={toggleShowExport}
+                            disabled={selected.length ? false : true}
+                        >
+                            Export Product
+                        </button>
+                        <button className="btn btn-success" onClick={toggleShowCreate}>
+                            Add Product
+                        </button>
+                    </div>
                 </div>
 
                 {body}

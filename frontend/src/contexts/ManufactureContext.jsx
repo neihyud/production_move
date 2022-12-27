@@ -10,6 +10,8 @@ import {
     DELETE_PRODUCT,
     FIND_PRODUCT,
     UPDATE_PRODUCT,
+    GET_PRODUCT,
+    EXPORT_PRODUCT,
 } from '../contexts/constants';
 
 export const ManufactureContext = React.createContext();
@@ -19,7 +21,7 @@ const ManufactureContextProvider = ({ children }) => {
         product: null,
         products: [],
         productLoading: true,
-        productLines: []
+        productLines: [],
     });
 
     const [showToast, setShowToast] = React.useState({
@@ -62,7 +64,7 @@ const ManufactureContextProvider = ({ children }) => {
     const updateProduct = async (code, product) => {
         try {
             const { data = {} } = await axios.put(
-                `${apiUrl}/manufacture/${code}/product/:${product.id}`,
+                `${apiUrl}/manufacture/${code}/product/${product.id}`,
                 product,
             );
             if (data.success) {
@@ -92,6 +94,41 @@ const ManufactureContextProvider = ({ children }) => {
         }
     };
 
+    const getProduct = async (code, productId) => {
+        try {
+            const { data = {} } = await axios.get(
+                `${apiUrl}/manufacture/${code}/product/${productId}`,
+            );
+            if (data.success) {
+                dispatch({ type: GET_PRODUCT, payload: data.product });
+                return data;
+            }
+        } catch (error) {
+            return error.response
+                ? error.response.data
+                : { success: false, message: 'Server error' };
+        }
+    };
+
+    const exportProduct = async (code, selected, _data) => {
+        try {
+            const { data = {} } = await axios.post(`${apiUrl}/manufacture/${code}/product/export`, {
+                productIds: selected,
+                agent: _data.agent,
+            });
+
+            console.log('data: ', data);
+            if (data.success) {
+                dispatch({ type: EXPORT_PRODUCT, payload: validateData(data.products) });
+                return data;
+            }
+        } catch (error) {
+            return error.response
+                ? error.response.data
+                : { success: false, message: 'Server error' };
+        }
+    };
+
     const validateData = (data) => {
         return data.map((dataItem) => {
             return {
@@ -109,6 +146,8 @@ const ManufactureContextProvider = ({ children }) => {
         addProduct,
         updateProduct,
         deleteProduct,
+        getProduct,
+        exportProduct,
     };
     return <ManufactureContext.Provider value={value}>{children}</ManufactureContext.Provider>;
 };
