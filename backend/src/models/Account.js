@@ -1,11 +1,13 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
+const { ROLE_ADMIN, ROLE_AGENT, ROLE_MANUFACTURE, ROLE_WARRANTY_CENTER } = require('../constants/role')
+
 const AccountSchema = new Schema({
     role: {
         type: String,
-        enum: ['admin', 'warranty-center', 'manufacture', 'agent'],
-        default: 'product'
+        enum: [ROLE_ADMIN, ROLE_WARRANTY_CENTER, ROLE_MANUFACTURE, ROLE_AGENT],
+        default: ROLE_AGENT
     },
     username: {
         type: String, required: true

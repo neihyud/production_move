@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
-const ManufacturingBaseSchema = new Schema({
+const ManufactureSchema = new Schema({
     name: String,
     address: String,
     createAt: {
@@ -10,4 +10,4 @@ const ManufacturingBaseSchema = new Schema({
     }
 })
 
-module.exports = mongoose.model('ManufacturingBase', ManufacturingBaseSchema)
+module.exports = mongoose.model('Manufacture', ManufactureSchema)

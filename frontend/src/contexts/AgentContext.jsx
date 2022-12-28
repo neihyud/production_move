@@ -1,25 +1,23 @@
 import axios from 'axios';
-import React from 'react';
-import { apiUrl } from './constants';
-import { manufactureReducer } from '../reducers/manufactureReducer';
+import React, { useEffect } from 'react';
+import { agentReducer } from '../reducers/agentReducer';
 
 import {
-    GET_WARRANTY,
+    apiUrl,
     PRODUCT_LOADED_SUCCESS,
     PRODUCT_LOADED_FAIL,
     ADD_PRODUCT,
-    DELETE_PRODUCT,
-    FIND_PRODUCT,
     UPDATE_PRODUCT,
     GET_PRODUCT,
+    GET_WARRANTY,
     EXPORT_PRODUCT,
-    GET_PRODUCT_ERROR,
-} from '../contexts/constants';
+    SET_LOADING,
+} from './constants';
 
-export const ManufactureContext = React.createContext();
+export const AgentContext = React.createContext();
 
-const ManufactureContextProvider = ({ children }) => {
-    const [manufactureState, dispatch] = React.useReducer(manufactureReducer, {
+const AgentContextProvider = ({ children }) => {
+    const [agentState, dispatch] = React.useReducer(agentReducer, {
         product: null,
         products: [],
         productLoading: true,
@@ -34,25 +32,14 @@ const ManufactureContextProvider = ({ children }) => {
         type: null,
     });
 
-    const getWarranties = async (code) => {
-        try {
-            const { data = {} } = await axios.get(`${apiUrl}/manufacture/${code}/product`);
-            if (data.success) {
-                dispatch({
-                    type: GET_WARRANTY,
-                    payload: validateData(data.warranties),
-                });
-            }
-        } catch (error) {
-            return error.response
-                ? error.response.data
-                : { success: false, message: 'Server error' };
-        }
-    };
+    useEffect(() => {
+        getWarranties();
+        return () => {};
+    }, []);
 
     const getProducts = async (code) => {
         try {
-            const { data = {} } = await axios.get(`${apiUrl}/manufacture/${code}/product`);
+            const { data = {} } = await axios.get(`${apiUrl}/agent/${code}/product`);
             if (data.success) {
                 dispatch({
                     type: PRODUCT_LOADED_SUCCESS,
@@ -66,10 +53,7 @@ const ManufactureContextProvider = ({ children }) => {
 
     const addProduct = async (code, newProduct) => {
         try {
-            const { data = {} } = await axios.post(
-                `${apiUrl}/manufacture/${code}/product`,
-                newProduct,
-            );
+            const { data = {} } = await axios.post(`${apiUrl}/agent/${code}/product`, newProduct);
             if (data.success) {
                 dispatch({ type: ADD_PRODUCT, payload: data.product });
                 return data;
@@ -84,7 +68,7 @@ const ManufactureContextProvider = ({ children }) => {
     const updateProduct = async (code, product) => {
         try {
             const { data = {} } = await axios.put(
-                `${apiUrl}/manufacture/${code}/product/${product.id}`,
+                `${apiUrl}/agent/${code}/product/${product.id}`,
                 product,
             );
             if (data.success) {
@@ -98,27 +82,9 @@ const ManufactureContextProvider = ({ children }) => {
         }
     };
 
-    const deleteProduct = async (code, productId) => {
-        try {
-            const { data = {} } = await axios.delete(
-                `${apiUrl}/manufacture/${code}/product/${productId}`,
-            );
-            if (data.success) {
-                dispatch({ type: DELETE_PRODUCT, payload: productId });
-                return data;
-            }
-        } catch (error) {
-            return error.response
-                ? error.response.data
-                : { success: false, message: 'Server error' };
-        }
-    };
-
     const getProduct = async (code, productId) => {
         try {
-            const { data = {} } = await axios.get(
-                `${apiUrl}/manufacture/${code}/product/${productId}`,
-            );
+            const { data = {} } = await axios.get(`${apiUrl}/agent/${code}/product/${productId}`);
             if (data.success) {
                 dispatch({ type: GET_PRODUCT, payload: data.product });
                 return data;
@@ -130,16 +96,45 @@ const ManufactureContextProvider = ({ children }) => {
         }
     };
 
-    const exportProduct = async (code, selected, _data) => {
+    const getProductWarranty = async (code) => {
         try {
-            const { data = {} } = await axios.post(`${apiUrl}/manufacture/${code}/product/export`, {
-                productIds: selected,
-                agent: _data.agent,
-            });
-
-            console.log('data: ', data);
+            const { data = {} } = await axios.get(`${apiUrl}/agent/${code}/product/warranty`);
             if (data.success) {
-                dispatch({ type: EXPORT_PRODUCT, payload: validateData(data.products) });
+                console.log('data: ', data);
+                dispatch({ type: PRODUCT_LOADED_SUCCESS, payload: data.products });
+                return data;
+            }
+        } catch (error) {
+            dispatch({ type: PRODUCT_LOADED_FAIL });
+            return error.response
+                ? error.response.data
+                : { success: false, message: 'Server error' };
+        }
+    };
+
+    const getProductWarrantyDone = async (code) => {
+        try {
+            const { data = {} } = await axios.get(`${apiUrl}/agent/${code}/product/warranty-done`);
+            if (data.success) {
+                dispatch({ type: PRODUCT_LOADED_SUCCESS, payload: data.products });
+                return data;
+            }
+        } catch (error) {
+            dispatch({ type: PRODUCT_LOADED_FAIL });
+            return error.response
+                ? error.response.data
+                : { success: false, message: 'Server error' };
+        }
+    };
+
+    const exportToWarranty = async (code, selected, _data) => {
+        try {
+            const { data = {} } = await axios.post(
+                `${apiUrl}/agent/${code}/product/warranty/export`,
+                { productIds: selected, warranty: _data.warranty },
+            );
+            if (data.success) {
+                dispatch({ type: EXPORT_PRODUCT, payload: selected });
                 return data;
             }
         } catch (error) {
@@ -149,18 +144,23 @@ const ManufactureContextProvider = ({ children }) => {
         }
     };
 
-    const getErrorProducts = async (code) => {
+    const getWarranties = async (code) => {
         try {
-            const { data = {} } = await axios.get(`${apiUrl}/manufacture/${code}/product-error`);
+            const { data = {} } = await axios.get(`${apiUrl}/common/warranty`);
             if (data.success) {
-                dispatch({
-                    type: GET_PRODUCT_ERROR,
-                    payload: validateData(data.products),
-                });
+                dispatch({ type: GET_PRODUCT, payload: data.warranties });
+                return data;
             }
         } catch (error) {
             dispatch({ type: PRODUCT_LOADED_FAIL });
+            return error.response
+                ? error.response.data
+                : { success: false, message: 'Server error' };
         }
+    };
+
+    const setLoading = async () => {
+        dispatch({ type: SET_LOADING });
     };
 
     const validateData = (data) => {
@@ -173,18 +173,19 @@ const ManufactureContextProvider = ({ children }) => {
     };
 
     const value = {
+        setLoading,
         showToast,
-        manufactureState,
+        agentState,
         setShowToast,
         getProducts,
         addProduct,
         updateProduct,
-        deleteProduct,
         getProduct,
-        exportProduct,
-        getErrorProducts,
+        exportToWarranty,
+        getProductWarranty,
+        getProductWarrantyDone
     };
-    return <ManufactureContext.Provider value={value}>{children}</ManufactureContext.Provider>;
+    return <AgentContext.Provider value={value}>{children}</AgentContext.Provider>;
 };
 
-export default ManufactureContextProvider;
+export default AgentContextProvider;

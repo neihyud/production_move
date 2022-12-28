@@ -2,7 +2,7 @@ const Product = require('../../models/Product')
 const ProductDetail = require('../../models/ProductDetail')
 const Manufacture = require('../../models/ManufacturingBase')
 
-const { STATUS_PRODUCT_AGENT } = require('../../constants/index')
+const { STATUS_PRODUCT_AGENT, STATUS_PRODUCT_ERROR_FACTORY, STATUS_PRODUCT_NEW, STATUS_PRODUCT_ERROR_MANUFACTURE } = require('../../constants/index')
 
 const validateProduct = (products) => {
     const _products = products.map((product) => {
@@ -21,7 +21,7 @@ module.exports = {
     getProducts: async (req, res) => {
         try {
             const { code } = req.params
-            const products = await Product.find({ 'note.new': code }).lean()
+            const products = await Product.find({ 'note.new': code, status: STATUS_PRODUCT_NEW }).lean()
 
             const _products = validateProduct(products)
 
@@ -190,7 +190,6 @@ module.exports = {
 
             await Product.updateMany({ _id: { $in: productIds }, 'note.new': code }, { 'note.agent': agent, status: STATUS_PRODUCT_AGENT })
 
-
             const products = await Product.find({ 'note.new': code }).lean()
             const _products = validateProduct(products)
             res.status(200).json({ success: true, message: 'Export product success', products: _products })
@@ -198,8 +197,6 @@ module.exports = {
         } catch (error) {
             res.status(500).json({ success: false, message: 'Internal Error' })
         }
-
-
     },
 
     // [POST] /manufacture/:code/product/:id/info
@@ -220,10 +217,19 @@ module.exports = {
     },
 
     // [GET] /manufacture/:code/product/error-product
-    getProductError: async (req, res) => {
-        const productError = await Product.find({ status: 'Lỗi, đã đưa về cơ sở sản xuất' })
-        res.status(200).json({ message: 'Get error product success', productError: productError })
-    },
+    getErrorProducts: async (req, res) => {
 
+        try {
+            const { code } = req.params
+
+            const productError = await Product.find({ 'note.new': code, status: STATUS_PRODUCT_ERROR_MANUFACTURE }).lean()
+
+            const _products = validateProduct(productError)
+            res.status(200).json({ success: true, message: 'Get error product success', products: _products })
+        } catch (error) {
+            res.status(500).json({ success: false, message: "Internal Error" })
+        }
+
+    },
 
 }

@@ -6,6 +6,7 @@ import React from 'react';
 
 import Admin from './views/admin/Admin'
 import Manufacture from './views/manufacture/Manufacture'
+import Agent from './views/agent/Agent'
 import { AuthContext } from './contexts/AuthContext';
 
 import { ROLE_ADMIN, ROLE_AGENT, ROLE_MANUFACTURE, ROLE_WARRANTY_CENTER } from './contexts/constants'
@@ -27,7 +28,7 @@ function App() {
       body = (<Manufacture />)
       break;
     case ROLE_AGENT:
-      body = (<Admin />)
+      body = (<Agent />)
       break;
     case ROLE_WARRANTY_CENTER:
       body = (<Admin />)

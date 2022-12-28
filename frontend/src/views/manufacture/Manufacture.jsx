@@ -6,6 +6,7 @@ import Landing from '../../components/layout/Landing';
 
 import Statistical from './pages/Statistical';
 import Product from './pages/Product';
+import Defective  from './pages/Defective';
 import Error from '../../components/layout/Error';
 
 import Auth from '../Auth';
@@ -17,6 +18,7 @@ export default function Manufacture() {
                 <Route path="/login" element={<Auth authRoute="login" />} />
                 <Route path="/dashboard" element={<ProtectedRoute element={<Statistical />} />} />
                 <Route path="/product" element={<ProtectedRoute element={<Product />} />} />
+                <Route path="/defective" element={<ProtectedRoute element={<Defective />} />} />
                 <Route path="*" element={<Landing />} />
             </Routes>
         </ManufactureContextProvider>

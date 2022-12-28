@@ -7,11 +7,10 @@ import {
     UPDATE_PRODUCT,
     GET_PRODUCT,
     EXPORT_PRODUCT,
-    GET_PRODUCT_ERROR,
-    GET_WARRANTY,
+    SET_LOADING,
 } from '../contexts/constants';
 
-export const manufactureReducer = (state, action) => {
+export const agentReducer = (state, action) => {
     const { type, payload } = action;
     switch (type) {
         case PRODUCT_LOADED_SUCCESS:
@@ -58,18 +57,22 @@ export const manufactureReducer = (state, action) => {
                 ...state,
                 products: newProduct,
             };
-        case EXPORT_PRODUCT: // can su de hien thi
+
+        case EXPORT_PRODUCT:
+            const _newProduct = state.products.map((product) => {
+                return !payload.includes(product.id);
+            });
             return {
                 ...state,
-                products: payload,
+                products: _newProduct,
             };
-        case GET_PRODUCT_ERROR:
+
+        case SET_LOADING:
             return {
                 ...state,
-                productsError: payload,
-                productLoading: false,
+                products: [],
+                // productLoading: true,
             };
-        
         default:
             return state;
     }

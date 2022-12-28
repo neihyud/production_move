@@ -76,6 +76,7 @@ a.active > li {
     background: #e2f0ed;
     margin-left: 0px;
     position: relative;
+    border-radius: 6px;
 }
 
 a.active > li .icon,
