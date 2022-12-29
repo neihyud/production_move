@@ -35,7 +35,7 @@ module.exports = {
 
             res.status(201).json({ success: true, message: 'Create Account Success', account: newAccount })
         } catch (error) {
-            res.status(500).json({ success: false, message: 'Internal Error', error })
+            res.status(500).json({ success: false, message: 'Internal Error, Report To Admin', error })
         }
 
 
@@ -64,7 +64,7 @@ module.exports = {
 
             res.status(201).json({ success: true, message: 'Update Account Success', account: updatedAccount })
         } catch (error) {
-            res.status(500).json({ success: false, message: 'Internal Error', error })
+            res.status(500).json({ success: false, message: 'Internal Error, Report To Admin', error })
         }
 
 
@@ -86,7 +86,7 @@ module.exports = {
             res.status(201).json({ success: true, message: 'Delete Account Success' })
 
         } catch (error) {
-            res.status(500).json({ success: false, message: 'Internal Error', error })
+            res.status(500).json({ success: false, message: 'Internal Error, Report To Admin', error })
         }
     }
 

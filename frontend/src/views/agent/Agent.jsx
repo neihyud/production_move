@@ -9,6 +9,7 @@ import Product from './pages/Product';
 import Order from './pages/Order';
 import Warranty from './pages/Warranty';
 import WarrantyDone from './pages/WarrantyDone';
+import Sold from './pages/Sold';
 
 import Auth from '../Auth';
 import Recall from './pages/Recall';
@@ -27,6 +28,7 @@ export default function Agent() {
                     element={<ProtectedRoute element={<WarrantyDone />} />}
                 />
                 <Route path="/recall" element={<ProtectedRoute element={<Recall />} />} />
+                <Route path="/sold" element={<ProtectedRoute element={<Sold />} />} />
                 <Route path="*" element={<Landing />} />
             </Routes>
         </AgentContextProvider>

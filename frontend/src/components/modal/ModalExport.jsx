@@ -1,20 +1,12 @@
 import React from 'react';
-import AlertMessage from '../layout/AlertMessage';
 
-const ModalExport = ({
-    toggleShowCreate,
-    handleSubmit,
-    register,
-    errors,
-    onSubmit,
-    isEdit,
-    alert,
-    children,
-}) => {
+const ModalExport = ({ handleSubmit, onSubmit, toggleShowExport, children, title }) => {
     return (
         <div className="modal-product-line">
-            <div onClick={toggleShowCreate} className="overlay"></div>
+            <div onClick={toggleShowExport} className="overlay"></div>
             <form className="content" onSubmit={handleSubmit(onSubmit)}>
+                <span className="center title-2">{title}</span>
+
                 {children}
             </form>
         </div>

@@ -34,7 +34,7 @@ const WarrantyDone = () => {
         setShowToast,
         getProductWarrantyDone,
         setLoading,
-        agentState: { products, productLoading, warranties },
+        agentState: { products, productLoading, productLines },
     } = useContext(AgentContext);
 
     const {
@@ -47,18 +47,19 @@ const WarrantyDone = () => {
 
     useLayoutEffect(() => {
         setLoading();
+        return () => {};
     }, []);
 
     useEffect(() => {
         getProductWarrantyDone(code);
-        // return () => {};
+        return () => {};
     }, []);
 
     const handleEditClick = (row) => async () => {
-        console.log('agentId: ', row.id);
+        console.log('agentId: ', row._id);
         setShowCreate(!showCreate);
 
-        setValue('id', row.id);
+        setValue('id', row._id);
     };
 
     const toggleShowCreate = () => {
@@ -75,7 +76,7 @@ const WarrantyDone = () => {
     };
 
     const columns = [
-        { headerName: 'Id', field: 'id', flex: 1 },
+        { headerName: 'Id', field: '_id', flex: 1 },
         {
             headerName: 'Name',
             field: 'productName',
@@ -194,7 +195,7 @@ const WarrantyDone = () => {
                             onClick={toggleShowCreate}
                             disabled={selected.length ? false : true}
                         >
-                            Export Product
+                            Warranty
                         </button>
                     </div>
                 </div>
@@ -204,12 +205,12 @@ const WarrantyDone = () => {
                 {showCreate && (
                     <ModalExport {...argsModalProduct}>
                         <label className="row">
-                            Warranty
+                            ProductLine
                             <select {...register('warranty')} className="">
-                                {warranties.map((warranty, index) => {
+                                {productLines.map((productLine, index) => {
                                     return (
-                                        <option value={warranty.username} key={index}>
-                                            {warranty.username}
+                                        <option value={productLine.username} key={index}>
+                                            {productLine.username}
                                         </option>
                                     );
                                 })}

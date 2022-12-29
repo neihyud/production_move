@@ -17,6 +17,7 @@ import { ManufactureContext } from '../../../contexts/ManufactureContext';
 import { AuthContext } from '../../../contexts/AuthContext';
 import ModalMessage from '../../../components/layout/ModalMessage';
 import ModalProduct from '../../../components/modal/ModalProduct';
+import ModalExport from '../../../components/modal/ModalExport';
 
 import {
     TYPE_ACTION_ADD,
@@ -27,6 +28,7 @@ import {
 
 export default function Products() {
     const [showCreate, setShowCreate] = useState(false);
+    const [showImport, setShowImport] = useState(false);
     const [showExport, setShowExport] = useState(false);
     const [showModal, setShowModal] = useState(false);
     const [typeAction, setTypeAction] = useState(TYPE_ACTION_ADD);
@@ -44,7 +46,7 @@ export default function Products() {
         exportProduct,
         showToast: { show, message, type },
         setShowToast,
-        manufactureState: { products, productLoading, product },
+        manufactureState: { products, productLoading, product, agents },
     } = useContext(ManufactureContext);
 
     const {
@@ -67,13 +69,13 @@ export default function Products() {
     }, []);
 
     const columns = [
-        { headerName: 'Id', field: 'id', flex: 1 },
+        { headerName: 'Id', field: '_id', flex: 1 },
         {
             headerName: 'Name',
             field: 'productName',
-            width: 150,
-            headerAlign: 'center',
-            align: 'center',
+            width: 250,
+            headerAlign: 'left',
+            align: 'left',
         },
         {
             headerName: 'Product Line',
@@ -111,6 +113,13 @@ export default function Products() {
             align: 'center',
         },
         {
+            headerName: 'CreatedAt',
+            field: 'createdAt',
+            width: 150,
+            headerAlign: 'center',
+            align: 'center',
+        },
+        {
             field: 'actions',
             type: 'actions',
             headerName: 'Actions',
@@ -128,7 +137,7 @@ export default function Products() {
                     <GridActionsCellItem
                         icon={<DeleteIcon />}
                         label="Delete"
-                        onClick={handleDeleteClick(row.id)}
+                        onClick={handleDeleteClick(row._id)}
                         color="inherit"
                     />,
                 ];
@@ -137,16 +146,19 @@ export default function Products() {
     ];
 
     const handleEditClick = (row) => async () => {
-        console.log('manufactureId: ', row.id);
+        console.log('manufactureId: ', row._id);
         setShowCreate(!showCreate);
         setTypeAction(TYPE_ACTION_EDIT);
 
-        let { product } = await getProduct(code, row.id);
+        let { product } = await getProduct(code, row._id);
 
         // goi query den database => lay gia tri r dien vao
-        setValue('id', row.id);
+        let _price = product.price.replace(/\./g, '');
+        console.log('product: ', _price);
+
+        setValue('id', row._id);
         setValue('productName', product.productName);
-        setValue('price', product.price);
+        setValue('price', _price);
         setValue('productLine', product.productLine);
         setValue('imageUri', product.imageUri);
         setValue('quantity', product.quantity);
@@ -187,17 +199,16 @@ export default function Products() {
     const toggleShowCreate = () => {
         setShowCreate(!showCreate);
         setTypeAction(TYPE_ACTION_ADD);
-        reset({
-            name: '',
-            password: '',
-            role: 'manufacture',
-        });
     };
 
     const toggleShowExport = () => {
-        setShowCreate(!showCreate);
+        setShowExport(!showExport);
         setTypeAction(TYPE_ACTION_EXPORT);
     };
+
+    // const toggleShowImport = () => {
+    //     setShowImport(!showImport);
+    // };
 
     let body = null;
     if (productLoading) {
@@ -244,6 +255,7 @@ export default function Products() {
         const { success, message, error } = _data;
 
         setShowCreate(false);
+        setShowExport(false);
         setShowToast({
             show: true,
             message,
@@ -271,6 +283,14 @@ export default function Products() {
         typeAction,
     };
 
+    const argsModalExport = {
+        handleSubmit,
+        onSubmit,
+        toggleShowExport,
+        register,
+        title: 'Export Agent',
+    };
+
     return (
         <div className="wrapper-body">
             <SidebarManufacture />
@@ -290,6 +310,14 @@ export default function Products() {
                         >
                             Export Product
                         </button>
+                        {/* <button
+                            className="btn btn-success"
+                            style={{ marginRight: '15px' }}
+                            onClick={toggleShowImport}
+                            // disabled={selected.length ? false : true}
+                        >
+                            Import Product
+                        </button> */}
                         <button className="btn btn-success" onClick={toggleShowCreate}>
                             Add Product
                         </button>
@@ -299,6 +327,26 @@ export default function Products() {
                 {body}
 
                 {showCreate && <ModalProduct {...argsModalProduct} />}
+
+                {/* {showImport && <ModalImport {...argsModalProduct} />} */}
+
+                {showExport && (
+                    <ModalExport {...argsModalExport}>
+                        <label className="row">
+                            Agent
+                            <select {...register('agent')} className="">
+                                {agents.map((agent, index) => {
+                                    return (
+                                        <option value={agent.username} key={index}>
+                                            {agent.username}
+                                        </option>
+                                    );
+                                })}
+                            </select>
+                        </label>
+                        <button className="btn btn-success">Export</button>
+                    </ModalExport>
+                )}
 
                 {showModal && <ModalMessage {...argsModal} />}
             </div>

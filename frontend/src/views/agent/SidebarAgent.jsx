@@ -5,6 +5,7 @@ import { MdDashboard, MdReportGmailerrorred } from 'react-icons/md';
 import { RiProductHuntLine } from 'react-icons/ri';
 import { AiOutlineAlert, AiFillDownCircle } from 'react-icons/ai';
 import { GiBugleCall } from 'react-icons/gi';
+import { FaBuysellads } from 'react-icons/fa';
 
 import Sidebar from '../../components/sidebar/Sidebar';
 
@@ -25,10 +26,10 @@ export default function SidebarAgent() {
                 </li>
             </NavLink>
 
-            <NavLink style={{ textDecoration: 'none' }} to="/order">
+            <NavLink style={{ textDecoration: 'none' }} to="/sold">
                 <li title="product">
-                    <AiOutlineAlert className="icon" />
-                    <span>Order</span>
+                    <FaBuysellads className="icon" />
+                    <span>Sold</span>
                 </li>
             </NavLink>
 

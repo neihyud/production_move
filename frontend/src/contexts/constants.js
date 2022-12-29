@@ -10,7 +10,7 @@ export const TYPE_ACTION_EDIT = 'EDIT'
 export const TYPE_ACTION_IMPORT = 'IMPORT'
 export const TYPE_ACTION_EXPORT = 'EXPORT'
 
-export const LOCAL_STORAGE_TOKEN_NAME = 'learnit-mern'
+export const LOCAL_STORAGE_TOKEN_NAME = 'product-move'
 export const SET_LOADING = "SET_LOADING"
 
 // Role
@@ -45,5 +45,11 @@ export const FIND_PRODUCT = "FIND_PRODUCT"
 export const UPDATE_PRODUCT = "UPDATE_PRODUCT"
 export const EXPORT_PRODUCT = "EXPORT_PRODUCT"
 export const GET_PRODUCT_ERROR = "GET_PRODUCT_ERROR"
+
+// Common
 export const GET_WARRANTY = "GET_WARRANTY"
+export const GET_AGENTS = "GET_AGENTS"
+export const GET_PRODUCTLINE = "GET_PRODUCTLINE"
+
+
 

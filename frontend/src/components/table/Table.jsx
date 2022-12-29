@@ -13,6 +13,7 @@ const Table = ({ columns, rows, checkboxSelection, handleOnCellClick, handleSele
         columns: {
             columnVisibilityModel: {
                 id: false,
+                _id: false,
             },
         },
     };
@@ -31,6 +32,7 @@ const Table = ({ columns, rows, checkboxSelection, handleOnCellClick, handleSele
             >
                 <DataGrid
                     rowHeight={45}
+                    getRowId={(row) => row._id}
                     initialState={initState}
                     className=""
                     columns={columns}

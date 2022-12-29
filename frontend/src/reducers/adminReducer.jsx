@@ -33,7 +33,7 @@ export const adminReducer = (state, action) => {
         case ADD_ACCOUNT:
             return {
                 ...state,
-                accounts: [...state.accounts, { ...payload, id: payload._id }],
+                accounts: [...state.accounts, payload],
             };
 
         case DELETE_ACCOUNT:
@@ -48,7 +48,7 @@ export const adminReducer = (state, action) => {
         case UPDATE_ACCOUNT:
             console.log('payload: ', payload);
             const newAccounts = state.accounts.map((account) =>
-                account._id === payload._id ? { ...payload, id: payload._id } : account,
+                account._id === payload._id ? payload : account,
             );
 
             return {
@@ -72,7 +72,7 @@ export const adminReducer = (state, action) => {
         case ADD_PRODUCTLINE:
             return {
                 ...state,
-                productLines: [...state.productLines, { ...payload, id: payload._id }],
+                productLines: [...state.productLines, payload],
             };
 
         case DELETE_PRODUCTLINE:
@@ -86,7 +86,7 @@ export const adminReducer = (state, action) => {
 
         case UPDATE_PRODUCTLINE:
             const newProductLine = state.productLines.map((productLine) =>
-                productLine._id === payload._id ? { ...payload, id: payload._id } : productLine,
+                productLine._id === payload._id ? payload : productLine,
             );
 
             return {

@@ -9,6 +9,7 @@ import Spinner from 'react-bootstrap/Spinner';
 import Toast from 'react-bootstrap/Toast';
 
 import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/DeleteOutlined';
 import { GridActionsCellItem } from '@mui/x-data-grid';
 import Button from '@mui/material/Button';
 
@@ -17,9 +18,10 @@ import { useForm } from 'react-hook-form';
 import { AgentContext } from '../../../contexts/AgentContext';
 import { AuthContext } from '../../../contexts/AuthContext';
 import ModalMessage from '../../../components/layout/ModalMessage';
+import ModalProduct from '../../../components/modal/ModalProduct';
 import ModalExport from '../../../components/modal/ModalExport';
 
-const Recall = () => {
+const Product = () => {
     const [showExport, setShowExport] = useState(false);
     const [selected, setSelected] = useState([]);
 
@@ -32,11 +34,11 @@ const Recall = () => {
     const {
         showToast: { show, message, type },
         setShowToast,
-        getProductWarrantyDone,
         setLoading,
-        productRecall,
-        recallToWarranty,
-        agentState: { products, productLoading, productLines },
+        createOrder,
+        getProductSold,
+        productReport,
+        agentState: { products, productLoading, warranties },
     } = useContext(AgentContext);
 
     const {
@@ -53,19 +55,19 @@ const Recall = () => {
     }, []);
 
     useEffect(() => {
-        getProductWarrantyDone(code);
+        getProductSold(code);
         return () => {};
     }, []);
 
     const handleEditClick = (row) => async () => {
-        console.log('agentId: ', row._id);
+        console.log('agentId: ', row);
         setShowExport(!showExport);
 
-        setValue('id', row._id);
+        // goi query den database => lay gia tri r dien vao
+        setValue('_id', row.id);
     };
 
     const toggleShowExport = () => {
-        console.log('productline: ', productLines);
         setShowExport(!showExport);
         reset({
             name: '',
@@ -83,9 +85,9 @@ const Recall = () => {
         {
             headerName: 'Name',
             field: 'productName',
-            width: 150,
-            headerAlign: 'center',
-            align: 'center',
+            width: 350,
+            headerAlign: 'left',
+            align: 'left',
         },
         {
             headerName: 'Product Line',
@@ -119,33 +121,37 @@ const Recall = () => {
             field: 'actions',
             type: 'actions',
             headerName: 'Actions',
-            width: 150,
+            width: 180,
             cellClassName: 'actions',
             renderCell: (params) => {
-                return (
+                return [
                     <Button
                         size="small"
                         variant="outlined"
                         color="success"
-                        onClick={handleWarranty(params.row)}
+                        onClick={handleEditClick(params)}
+                        style={{ marginRight: '5px' }}
                     >
-                        Warranty
-                    </Button>
-                );
+                        Info
+                    </Button>,
+                    <Button
+                        size="small"
+                        variant="outlined"
+                        color="success"
+                        onClick={handleEditClick(params)}
+                    >
+                        Report
+                    </Button>,
+                ];
             },
         },
     ];
 
-    const handleWarranty = (row) => () => {
-        // toggleShowExport();
-        recallToWarranty(code, row)
-        console.log('paramtHandnle Warranty: ', row);
-    };
-
     const onSubmit = async (data) => {
         console.log('data: ', data);
 
-        const { success, message, error } = await productRecall(code, data);
+        const productId = data._id;
+        const { success, message, error } = await productReport(code, productId, data);
 
         setShowExport(false);
         setShowToast({
@@ -170,55 +176,59 @@ const Recall = () => {
                 {...{
                     columns,
                     rows: products,
+                    checkboxSelection: false,
                     handleSelectClick,
-                    checkboxSelection: true,
                 }}
             />
         );
     }
-    const argsModalProduct = {
+    const argsModalExport = {
         toggleShowExport,
         handleSubmit,
         register,
         errors,
         onSubmit,
+        title: 'Report',
     };
     return (
         <div className="wrapper-body">
             <SidebarAgent />
             <div className="wrapper-content">
-                <Navbar title="Warranty" />
+                <Navbar title="Product" />
                 <div className="group-btn">
                     <div className="center">
                         <input type="text" className="input" />
                         <button className="c-btn">Search</button>
                     </div>
-                    <div>
-                        <button className="btn btn-success" onClick={toggleShowExport}>
-                            Recall
+                    {/* <div>
+                        <button
+                            className="btn btn-success"
+                            onClick={toggleShowExport}
+                            disabled={selected.length ? false : true}
+                        >
+                            Report
                         </button>
-                    </div>
+                    </div> */}
                 </div>
 
-                {body}
-
                 {showExport && (
-                    <ModalExport {...argsModalProduct}>
+                    <ModalExport {...argsModalExport}>
+                        <input className="row" {...register('_id')} type="hidden" />
                         <label className="row">
-                            ProductLine
-                            <select {...register('productLine')} className="">
-                                {productLines.map((productLine, index) => {
-                                    return (
-                                        <option value={productLine.code} key={index}>
-                                            {productLine.productLine}
-                                        </option>
-                                    );
-                                })}
-                            </select>
+                            Description
+                            <textarea
+                                {...register('error', { required: true })}
+                                placeholder="..."
+                                className="input"
+                            />
                         </label>
-                        <button className="btn btn-success">Export</button>
+                        {errors.error && <span className="error">This field is required</span>}
+
+                        <button className="btn btn-success">Report</button>
                     </ModalExport>
                 )}
+
+                {body}
             </div>
             <Toast
                 show={show}
@@ -236,4 +246,4 @@ const Recall = () => {
     );
 };
 
-export default Recall;
+export default Product;

@@ -8,25 +8,25 @@ module.exports = {
             const warranties = await Account.find({ role: ROLE_WARRANTY_CENTER }).select('username').lean()
             res.status(200).json({ success: true, message: "Warranty success", warranties })
         } catch (error) {
-            res.status(500).json({ success: false, message: 'Internal error' })
+            res.status(500).json({ success: false, message: 'Internal Error, Report To Admin' })
         }
     },
 
     getProductLines: async (req, res) => {
         try {
-            const productLines = await ProductLine.find({}).select('code').lean()
+            const productLines = await ProductLine.find({}).select('code productLine').lean()
             res.status(200).json({ success: true, message: "ProductLine success", productLines })
         } catch (error) {
-            res.status(500).json({ success: false, message: 'Internal error' })
+            res.status(500).json({ success: false, message: 'Internal Error, Report To Admin' })
         }
     },
 
     getAgents: async (req, res) => {
         try {
-            const agents = await Account.find({ role: ROLE_AGENT }).select('code').lean()
+            const agents = await Account.find({ role: ROLE_AGENT }).select('username').lean()
             res.status(200).json({ success: true, message: "ProductLine success", agents })
         } catch (error) {
-            res.status(500).json({ success: false, message: 'Internal error' })
+            res.status(500).json({ success: false, message: 'Internal Error, Report To Admin' })
         }
     }
 

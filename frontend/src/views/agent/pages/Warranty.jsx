@@ -20,7 +20,7 @@ import ModalMessage from '../../../components/layout/ModalMessage';
 import ModalExport from '../../../components/modal/ModalExport';
 
 const Warranty = () => {
-    const [showCreate, setShowCreate] = useState(false);
+    const [showExport, setShowExport] = useState(false);
     const [selected, setSelected] = useState([]);
 
     const {
@@ -34,6 +34,7 @@ const Warranty = () => {
         setShowToast,
         getProductWarranty,
         setLoading,
+        exportToWarranty,
         agentState: { products, productLoading, warranties },
     } = useContext(AgentContext);
 
@@ -47,22 +48,24 @@ const Warranty = () => {
 
     useLayoutEffect(() => {
         setLoading();
+        return () => {};
     }, []);
 
     useEffect(() => {
         getProductWarranty(code);
-        // return () => {};
+        return () => {};
     }, []);
 
     const handleEditClick = (row) => async () => {
-        console.log('agentId: ', row.id);
-        setShowCreate(!showCreate);
+        console.log('agentId: ', row._id);
+        setShowExport(!showExport);
 
-        setValue('id', row.id);
+        setValue('id', row._id);
     };
 
-    const toggleShowCreate = () => {
-        setShowCreate(!showCreate);
+    const toggleShowExport = () => {
+        console.log('warranty: ', warranties);
+        setShowExport(!showExport);
         reset({
             name: '',
             password: '',
@@ -75,7 +78,7 @@ const Warranty = () => {
     };
 
     const columns = [
-        { headerName: 'Id', field: 'id', flex: 1 },
+        { headerName: 'Id', field: '_id', flex: 1 },
         {
             headerName: 'Name',
             field: 'productName',
@@ -133,16 +136,16 @@ const Warranty = () => {
     ];
 
     const handleWarranty = (params) => () => {
-        toggleShowCreate();
+        toggleShowExport();
         console.log('params: ', params);
     };
 
     const onSubmit = async (data) => {
         console.log('data: ', data);
 
-        const { success, message, error } = await Warranty();
+        const { success, message, error } = await exportToWarranty(code, selected, data);
 
-        setShowCreate(false);
+        setShowExport(false);
         setShowToast({
             show: true,
             message,
@@ -172,7 +175,7 @@ const Warranty = () => {
         );
     }
     const argsModalProduct = {
-        toggleShowCreate,
+        toggleShowExport,
         handleSubmit,
         register,
         errors,
@@ -191,24 +194,24 @@ const Warranty = () => {
                     <div>
                         <button
                             className="btn btn-success"
-                            onClick={toggleShowCreate}
+                            onClick={toggleShowExport}
                             disabled={selected.length ? false : true}
                         >
-                            Export Product
+                            Warranty
                         </button>
                     </div>
                 </div>
 
                 {body}
 
-                {showCreate && (
+                {showExport && (
                     <ModalExport {...argsModalProduct}>
                         <label className="row">
                             Warranty
                             <select {...register('warranty')} className="">
                                 {warranties.map((warranty, index) => {
                                     return (
-                                        <option value={warranty.username} key={index}>
+                                        <option value={warranty.username} key={warranty._id}>
                                             {warranty.username}
                                         </option>
                                     );

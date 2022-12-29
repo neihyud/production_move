@@ -1,8 +1,9 @@
 const Product = require('../../models/Product')
 const ProductDetail = require('../../models/ProductDetail')
-const Manufacture = require('../../models/ManufacturingBase')
+const Manufacture = require('../../models/Manufacturing')
 
 const { STATUS_PRODUCT_AGENT, STATUS_PRODUCT_ERROR_FACTORY, STATUS_PRODUCT_NEW, STATUS_PRODUCT_ERROR_MANUFACTURE } = require('../../constants/index')
+const { default: mongoose } = require('mongoose')
 
 const validateProduct = (products) => {
     const _products = products.map((product) => {
@@ -27,7 +28,7 @@ module.exports = {
 
             res.status(200).json({ success: true, message: "Get Product Success", products: _products })
         } catch (error) {
-            res.status(500).json({ success: false, message: 'Internal Error', error })
+            res.status(500).json({ success: false, message: 'Internal Error, Report To Admin', error })
         }
     },
 
@@ -47,7 +48,7 @@ module.exports = {
 
             res.status(200).json({ success: true, message: "Get Product Success", product: _product })
         } catch (error) {
-            res.status(500).json({ success: false, message: 'Internal Error', error })
+            res.status(500).json({ success: false, message: 'Internal Error, Report To Admin', error })
         }
     },
 
@@ -78,16 +79,18 @@ module.exports = {
                 return res.status(400).json({ success: false, message: 'Product is exist' })
             }
 
-            const _newProduct = new Product({
+            let _newProduct = new Product({
+                _id: new mongoose.Types.ObjectId(),
                 productName,
                 note: { new: code }, productLine, price,
                 quantity
             })
 
-            let newProduct = await _newProduct.save()
+            await _newProduct.save()
+
 
             const _newProductDetail = new ProductDetail({
-                productId: newProduct._id,
+                productId: _newProduct._id,
                 description,
                 engineType,
                 petrolTankCapacity,
@@ -103,11 +106,9 @@ module.exports = {
 
             await _newProductDetail.save()
 
-            const status = _newProduct.status
-            _newProduct = { ..._newProduct, note: _newProduct.note[status] }
             return res.status(200).json({ success: true, message: 'Created Product Success', product: _newProduct })
         } catch (error) {
-            res.status(500).json({ success: false, message: 'Internal Error', error })
+            res.status(500).json({ success: false, message: 'Internal Error, Report To Admin', error })
         }
     },
 
@@ -157,7 +158,7 @@ module.exports = {
             updateProduct = { ...updateProduct, note: updateProduct.note[status] }
             return res.status(200).json({ success: true, message: 'Update Product Success', product: updateProduct })
         } catch (error) {
-            res.status(500).json({ success: false, message: 'Internal Error', error })
+            res.status(500).json({ success: false, message: 'Internal Error, Report To Admin', error })
         }
     },
 
@@ -177,7 +178,7 @@ module.exports = {
             res.status(200).json({ success: true, message: 'Delete Success' })
 
         } catch (error) {
-            res.status(500).json({ success: false, message: 'Internal Error', error })
+            res.status(500).json({ success: false, message: 'Internal Error, Report To Admin', error })
         }
     },
 
@@ -190,31 +191,31 @@ module.exports = {
 
             await Product.updateMany({ _id: { $in: productIds }, 'note.new': code }, { 'note.agent': agent, status: STATUS_PRODUCT_AGENT })
 
-            const products = await Product.find({ 'note.new': code }).lean()
-            const _products = validateProduct(products)
-            res.status(200).json({ success: true, message: 'Export product success', products: _products })
+            // const products = await Product.find({ 'note.new': code }).lean()
+            // const _products = validateProduct(products)
+            res.status(200).json({ success: true, message: 'Export product success', products: productIds })
 
         } catch (error) {
-            res.status(500).json({ success: false, message: 'Internal Error' })
+            res.status(500).json({ success: false, message: 'Internal Error, Report To Admin' })
         }
     },
 
-    // [POST] /manufacture/:code/product/:id/info
-    updateInfo: async (req, res) => {
-        const _id = req.params.id;
+    // [PUT] /manufacture/:code/product/:id/info
+    // updateInfo: async (req, res) => {
+    //     const _id = req.params.id;
 
-        const { place } = req.body
+    //     const { place } = req.body
 
-        const production = await Manufacture.find({ _id })
+    //     const production = await Manufacture.find({ _id })
 
-        if (!production) {
-            res.status(400).json({ message: 'Manufacture not found' })
-        }
+    //     if (!production) {
+    //         res.status(400).json({ message: 'Manufacture not found' })
+    //     }
 
-        await production.updateOne({ _id }, { place })
+    //     await production.updateOne({ _id }, { place })
 
-        res.status(200).json({ message: 'Manufacture: update info success' })
-    },
+    //     res.status(200).json({ message: 'Manufacture: update info success' })
+    // },
 
     // [GET] /manufacture/:code/product/error-product
     getErrorProducts: async (req, res) => {
@@ -227,7 +228,7 @@ module.exports = {
             const _products = validateProduct(productError)
             res.status(200).json({ success: true, message: 'Get error product success', products: _products })
         } catch (error) {
-            res.status(500).json({ success: false, message: "Internal Error" })
+            res.status(500).json({ success: false, message: "Internal Error, Report To Admin" })
         }
 
     },

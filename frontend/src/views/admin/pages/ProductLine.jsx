@@ -48,7 +48,7 @@ export default function Products() {
     }, []);
 
     const columns = [
-        { headerName: 'Id', field: 'id', flex: 1 },
+        { headerName: 'Id', field: '_id', flex: 1 },
         { headerName: 'Code', field: 'code', width: 150, headerAlign: 'center', align: 'center' },
         {
             headerName: 'Name',
@@ -82,7 +82,7 @@ export default function Products() {
                     <GridActionsCellItem
                         icon={<DeleteIcon />}
                         label="Delete"
-                        onClick={handleDeleteClick(row.id)}
+                        onClick={handleDeleteClick(row._id)}
                         color="inherit"
                     />,
                 ];
@@ -91,7 +91,7 @@ export default function Products() {
     ];
 
     const handleEditClick = (row) => () => {
-        console.log(row.id);
+        console.log(row._id);
         setShowCreate(!showCreate);
         setIsEdit(true);
 

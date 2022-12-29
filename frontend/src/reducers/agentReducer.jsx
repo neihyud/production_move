@@ -8,6 +8,8 @@ import {
     GET_PRODUCT,
     EXPORT_PRODUCT,
     SET_LOADING,
+    GET_WARRANTY,
+    GET_PRODUCTLINE,
 } from '../contexts/constants';
 
 export const agentReducer = (state, action) => {
@@ -36,7 +38,7 @@ export const agentReducer = (state, action) => {
         case ADD_PRODUCT:
             return {
                 ...state,
-                products: [...state.products, { ...payload, id: payload._id }],
+                products: [...state.products, payload],
             };
 
         case DELETE_PRODUCT:
@@ -50,7 +52,7 @@ export const agentReducer = (state, action) => {
 
         case UPDATE_PRODUCT:
             const newProduct = state.products.map((product) =>
-                product._id === payload._id ? { ...payload, id: payload._id } : product,
+                product._id === payload._id ? payload : product,
             );
 
             return {
@@ -59,14 +61,25 @@ export const agentReducer = (state, action) => {
             };
 
         case EXPORT_PRODUCT:
-            const _newProduct = state.products.map((product) => {
-                return !payload.includes(product.id);
+            const _newProduct = state.products.filter((product) => {
+                return !payload.includes(product._id);
             });
             return {
                 ...state,
                 products: _newProduct,
             };
 
+        case GET_WARRANTY:
+            return {
+                ...state,
+                warranties: payload,
+            };
+
+        case GET_PRODUCTLINE:
+            return {
+                ...state,
+                productLines: payload,
+            };
         case SET_LOADING:
             return {
                 ...state,

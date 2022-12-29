@@ -1,6 +1,6 @@
 import axios from 'axios';
 import React from 'react';
-import { apiUrl } from './constants';
+import { apiUrl, GET_AGENTS, PRODUCTLINE_LOADED_FAIL } from './constants';
 import { manufactureReducer } from '../reducers/manufactureReducer';
 
 import {
@@ -26,6 +26,7 @@ const ManufactureContextProvider = ({ children }) => {
         productLines: [],
         productsError: [],
         warranties: [],
+        agents: [],
     });
 
     const [showToast, setShowToast] = React.useState({
@@ -34,21 +35,10 @@ const ManufactureContextProvider = ({ children }) => {
         type: null,
     });
 
-    const getWarranties = async (code) => {
-        try {
-            const { data = {} } = await axios.get(`${apiUrl}/manufacture/${code}/product`);
-            if (data.success) {
-                dispatch({
-                    type: GET_WARRANTY,
-                    payload: validateData(data.warranties),
-                });
-            }
-        } catch (error) {
-            return error.response
-                ? error.response.data
-                : { success: false, message: 'Server error' };
-        }
-    };
+    React.useEffect(() => {
+        getAgents();
+        return () => {};
+    }, []);
 
     const getProducts = async (code) => {
         try {
@@ -56,7 +46,7 @@ const ManufactureContextProvider = ({ children }) => {
             if (data.success) {
                 dispatch({
                     type: PRODUCT_LOADED_SUCCESS,
-                    payload: validateData(data.products),
+                    payload: data.products,
                 });
             }
         } catch (error) {
@@ -139,7 +129,7 @@ const ManufactureContextProvider = ({ children }) => {
 
             console.log('data: ', data);
             if (data.success) {
-                dispatch({ type: EXPORT_PRODUCT, payload: validateData(data.products) });
+                dispatch({ type: EXPORT_PRODUCT, payload: selected });
                 return data;
             }
         } catch (error) {
@@ -155,7 +145,7 @@ const ManufactureContextProvider = ({ children }) => {
             if (data.success) {
                 dispatch({
                     type: GET_PRODUCT_ERROR,
-                    payload: validateData(data.products),
+                    payload: data.products,
                 });
             }
         } catch (error) {
@@ -163,13 +153,18 @@ const ManufactureContextProvider = ({ children }) => {
         }
     };
 
-    const validateData = (data) => {
-        return data.map((dataItem) => {
-            return {
-                ...dataItem,
-                id: dataItem._id,
-            };
-        });
+    const getAgents = async () => {
+        try {
+            const { data = {} } = await axios.get(`${apiUrl}/common/agent`);
+            if (data.success) {
+                dispatch({ type: GET_AGENTS, payload: data.agents });
+                return data;
+            }
+        } catch (error) {
+            return error.response
+                ? error.response.data
+                : { success: false, message: 'Server error' };
+        }
     };
 
     const value = {

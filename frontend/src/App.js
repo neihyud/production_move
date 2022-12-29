@@ -7,6 +7,7 @@ import React from 'react';
 import Admin from './views/admin/Admin'
 import Manufacture from './views/manufacture/Manufacture'
 import Agent from './views/agent/Agent'
+import Warranty from './views/warranty-center/Warranty';
 import { AuthContext } from './contexts/AuthContext';
 
 import { ROLE_ADMIN, ROLE_AGENT, ROLE_MANUFACTURE, ROLE_WARRANTY_CENTER } from './contexts/constants'
@@ -31,8 +32,9 @@ function App() {
       body = (<Agent />)
       break;
     case ROLE_WARRANTY_CENTER:
-      body = (<Admin />)
+      body = (<Warranty />)
       break;
+
     default:
       body = (
         <Routes>

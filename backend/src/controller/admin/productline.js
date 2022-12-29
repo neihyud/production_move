@@ -29,7 +29,7 @@ module.exports = {
 
             return res.status(200).json({ success: true, message: 'Created ProductLine Success', productLine: newProductline })
         } catch (error) {
-            res.status(500).json({ success: false, message: 'Internal Error', error })
+            res.status(500).json({ success: false, message: 'Internal Error, Report To Admin', error })
         }
     },
 
@@ -49,7 +49,7 @@ module.exports = {
             res.status(200).json({ success: true, message: 'Update ProductLine Success', productLine: updatedProductLine })
 
         } catch (error) {
-            res.status(500).json({ success: false, message: 'Internal Error', error })
+            res.status(500).json({ success: false, message: 'Internal Error, Report To Admin', error })
         }
     },
 
@@ -69,7 +69,7 @@ module.exports = {
             res.status(200).json({ success: true, message: 'Delete Success' })
 
         } catch (error) {
-            res.status(500).json({ success: false, message: 'Internal Error', error })
+            res.status(500).json({ success: false, message: 'Internal Error, Report To Admin', error })
         }
 
     }

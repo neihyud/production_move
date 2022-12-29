@@ -2,8 +2,6 @@ import React from 'react';
 import {
     TYPE_ACTION_ADD,
     TYPE_ACTION_EDIT,
-    TYPE_ACTION_EXPORT,
-    TYPE_ACTION_IMPORT,
 } from '../../contexts/constants';
 
 const ModalProduct = ({
@@ -27,14 +25,6 @@ const ModalProduct = ({
 
                 {typeAction === TYPE_ACTION_ADD && (
                     <span className="center title-2">Create Product</span>
-                )}
-
-                {typeAction === TYPE_ACTION_EXPORT && (
-                    <span className="center title-2">Export Product</span>
-                )}
-
-                {typeAction === TYPE_ACTION_IMPORT && (
-                    <span className="center title-2">Import Product</span>
                 )}
 
                 {(typeAction === TYPE_ACTION_EDIT || typeAction === TYPE_ACTION_ADD) && (
@@ -208,26 +198,6 @@ const ModalProduct = ({
                         </label>
                         {errors.bootSystem && <span className="error">This field is required</span>}
                     </>
-                )}
-
-                {typeAction === TYPE_ACTION_EXPORT && (
-                    <label className="row">
-                        Agents
-                        <select {...register('agent')} className="">
-                            <option value="agent zero">agent zero</option>
-                            <option value="agent second">agent second</option>
-                            <option value="agent third">agent third</option>
-                            <option value="agent fourth">agent fourth</option>
-                        </select>
-                    </label>
-                )}
-
-                {typeAction === TYPE_ACTION_EXPORT && (
-                    <button className="btn btn-success">Export</button>
-                )}
-
-                {typeAction === TYPE_ACTION_IMPORT && (
-                    <button className="btn btn-success">Import</button>
                 )}
 
                 {typeAction === TYPE_ACTION_EDIT && (

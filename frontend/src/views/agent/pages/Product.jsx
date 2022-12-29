@@ -18,9 +18,10 @@ import { AgentContext } from '../../../contexts/AgentContext';
 import { AuthContext } from '../../../contexts/AuthContext';
 import ModalMessage from '../../../components/layout/ModalMessage';
 import ModalProduct from '../../../components/modal/ModalProduct';
+import ModalExport from '../../../components/modal/ModalExport';
 
 const Product = () => {
-    const [showCreate, setShowCreate] = useState(false);
+    const [showExport, setShowExport] = useState(false);
     const [selected, setSelected] = useState([]);
 
     const {
@@ -34,6 +35,7 @@ const Product = () => {
         setShowToast,
         getProducts,
         setLoading,
+        createOrder,
         agentState: { products, productLoading, warranties },
     } = useContext(AgentContext);
 
@@ -45,9 +47,10 @@ const Product = () => {
         setValue,
     } = useForm();
 
-    // useLayoutEffect(() => {
-    //     setLoading();
-    // }, []);
+    useLayoutEffect(() => {
+        setLoading();
+        return () => {};
+    }, []);
 
     useEffect(() => {
         getProducts(code);
@@ -55,15 +58,15 @@ const Product = () => {
     }, []);
 
     const handleEditClick = (row) => async () => {
-        console.log('agentId: ', row.id);
-        setShowCreate(!showCreate);
+        console.log('agentId: ', row._id);
+        setShowExport(!showExport);
 
         // goi query den database => lay gia tri r dien vao
-        setValue('id', row.id);
+        setValue('id', row._id);
     };
 
-    const toggleShowCreate = () => {
-        setShowCreate(!showCreate);
+    const toggleShowExport = () => {
+        setShowExport(!showExport);
         reset({
             name: '',
             password: '',
@@ -76,13 +79,13 @@ const Product = () => {
     };
 
     const columns = [
-        { headerName: 'Id', field: 'id', flex: 1 },
+        { headerName: 'Id', field: '_id', flex: 1 },
         {
             headerName: 'Name',
             field: 'productName',
-            width: 150,
-            headerAlign: 'center',
-            align: 'center',
+            width: 350,
+            headerAlign: 'left',
+            align: 'left',
         },
         {
             headerName: 'Product Line',
@@ -130,7 +133,7 @@ const Product = () => {
                     // <GridActionsCellItem
                     //     icon={<DeleteIcon />}
                     //     label="Delete"
-                    //     onClick={handleDeleteClick(row.id)}
+                    //     onClick={handleDeleteClick(row._id)}
                     //     color="inherit"
                     // />,
                 ];
@@ -141,9 +144,9 @@ const Product = () => {
     const onSubmit = async (data) => {
         console.log('data: ', data);
 
-        const { success, message, error } = await Product();
+        const { success, message, error } = await createOrder(code, selected, data);
 
-        setShowCreate(false);
+        setShowExport(false);
         setShowToast({
             show: true,
             message,
@@ -172,12 +175,13 @@ const Product = () => {
             />
         );
     }
-    const argsModalProduct = {
-        toggleShowCreate,
+    const argsModalExport = {
+        toggleShowExport,
         handleSubmit,
         register,
         errors,
         onSubmit,
+        title: 'Order',
     };
     return (
         <div className="wrapper-body">
@@ -190,15 +194,52 @@ const Product = () => {
                         <button className="c-btn">Search</button>
                     </div>
                     <div>
-                        <button className="btn btn-success" onClick={toggleShowCreate}>
-                            Import Product
+                        <button
+                            className="btn btn-success"
+                            onClick={toggleShowExport}
+                            disabled={selected.length ? false : true}
+                        >
+                            Order
                         </button>
                     </div>
                 </div>
 
-                {body}
+                {showExport && (
+                    <ModalExport {...argsModalExport}>
+                        <label className="row">
+                            Name
+                            <input
+                                {...register('username', { required: true })}
+                                placeholder="Honda"
+                                className="input"
+                            />
+                        </label>
+                        {errors.username && <span className="error">This field is required</span>}
 
-                {showCreate && <ModalProduct {...argsModalProduct} />}
+                        <label className="row">
+                            Phone
+                            <input
+                                {...register('phone', { required: true })}
+                                placeholder="0123456798"
+                                type="number"
+                                className="input"
+                            />
+                        </label>
+                        {errors.phone && <span className="error">This field is required</span>}
+                        <label className="row">
+                            Address
+                            <input
+                                {...register('address', { required: true })}
+                                placeholder="Ha Noi"
+                                className="input"
+                            />
+                        </label>
+                        {errors.address && <span className="error">This field is required</span>}
+                        <button className="btn btn-success">Order</button>
+                    </ModalExport>
+                )}
+
+                {body}
             </div>
             <Toast
                 show={show}

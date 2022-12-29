@@ -2,27 +2,23 @@ import React from 'react';
 
 import './page.css';
 import '../../../assets/css/common.css';
-import SidebarAgent from '../SidebarAgent';
+import SidebarWarranty from '../SidebarWarranty';
 import Navbar from '../../../components/navbar/Navbar';
 import Table from '../../../components/table/Table';
 import Spinner from 'react-bootstrap/Spinner';
 import Toast from 'react-bootstrap/Toast';
-
-import EditIcon from '@mui/icons-material/Edit';
-import { GridActionsCellItem } from '@mui/x-data-grid';
-import Button from '@mui/material/Button';
+import { Button } from '@mui/material';
 
 import { useState, useEffect, useContext } from 'react';
-import { useForm } from 'react-hook-form';
-import { AgentContext } from '../../../contexts/AgentContext';
+import { WarrantyContext } from '../../../contexts/WarrantyContext';
 import { AuthContext } from '../../../contexts/AuthContext';
-import ModalMessage from '../../../components/layout/ModalMessage';
-import ModalProduct from '../../../components/modal/ModalProduct';
+import ModalAction from '../../../components/modal/ModalAction';
 
-const Order = () => {
-    const [showCreate, setShowCreate] = useState(false);
-    const [selected, setSelected] = useState([]);
+const Product = () => {
+    const [showModal, setShowModal] = useState(false);
+    const [isDone, setIsDone] = useState(false);
 
+    let idRef = React.useRef(0);
     const {
         authState: {
             user: { username: code },
@@ -33,51 +29,24 @@ const Order = () => {
         showToast: { show, message, type },
         setShowToast,
         getProducts,
-        agentState: { products, productLoading },
-    } = useContext(AgentContext);
-
-    const {
-        register,
-        handleSubmit,
-        formState: { errors },
-        reset,
-        setValue,
-    } = useForm();
+        exportToAgent,
+        exportToManufacture,
+        warrantyState: { products, productLoading },
+    } = useContext(WarrantyContext);
 
     useEffect(() => {
         getProducts(code);
         return () => {};
     }, []);
 
-    const handleEditClick = (row) => async () => {
-        console.log('agentId: ', row._id);
-        setShowCreate(!showCreate);
-
-        // goi query den database => lay gia tri r dien vao
-        setValue('id', row._id);
-    };
-
-    const toggleShowCreate = () => {
-        setShowCreate(!showCreate);
-        reset({
-            name: '',
-            password: '',
-            role: 'agent',
-        });
-    };
-
-    const handleSelectClick = (selected) => {
-        setSelected(selected);
-    };
-
     const columns = [
         { headerName: 'Id', field: '_id', flex: 1 },
         {
             headerName: 'Name',
             field: 'productName',
-            width: 150,
-            headerAlign: 'center',
-            align: 'center',
+            width: 350,
+            headerAlign: 'left',
+            align: 'left',
         },
         {
             headerName: 'Product Line',
@@ -111,41 +80,54 @@ const Order = () => {
             field: 'actions',
             type: 'actions',
             headerName: 'Actions',
-            width: 150,
+            width: 180,
             cellClassName: 'actions',
             renderCell: (params) => {
-                return (
+                return [
+                    <Button
+                        size="small"
+                        variant="outlined"
+                        color="error"
+                        onClick={handleProductError(params)}
+                        style={{ marginRight: '8px' }}
+                    >
+                        Error
+                    </Button>,
                     <Button
                         size="small"
                         variant="outlined"
                         color="success"
-                        onClick={handleOrder(params)}
+                        onClick={handleProductSuccess(params)}
                     >
-                        Order
-                    </Button>
-                );
+                        Done
+                    </Button>,
+                ];
             },
         },
     ];
 
-    const handleOrder = (params) => () => {
-        toggleShowCreate();
-        console.log('params: ', params);
+    const handleProductError = (params) => () => {
+        console.log('params', params);
+        setIsDone(false);
+        setShowModal(!showModal);
+        idRef.current = params.row._id;
+        console.log('Test');
     };
 
-    const onSubmit = async (data) => {
-        console.log('data: ', data);
+    const handleProductSuccess = (params) => () => {
+        setIsDone(true);
+        setShowModal(!showModal);
+        idRef.current = params.row._id;
+    };
 
-        const { success, message, error } = await Order();
-
-        setShowCreate(false);
-        setShowToast({
-            show: true,
-            message,
-            type: success ? 'success' : 'danger',
-        });
-        reset(data);
-        setSelected([]);
+    const handleAction = async (isDone) => {
+        const id = idRef.current;
+        if (isDone) {
+            await exportToAgent(code, id);
+        } else {
+            await exportToManufacture(code, id);
+        }
+        setShowModal(!showModal);
     };
 
     let body = null;
@@ -156,43 +138,51 @@ const Order = () => {
             </div>
         );
     } else {
+        console.log('products: ', products);
         body = (
             <Table
                 {...{
                     columns,
                     rows: products,
-                    handleSelectClick,
                 }}
             />
         );
     }
-    const argsModalProduct = {
-        toggleShowCreate,
-        handleSubmit,
-        register,
-        errors,
-        onSubmit,
+
+    const argsError = {
+        title: 'Export To Manufacture',
+        body: 'You want to export to Manufacture',
+        setShowModal,
+        showModal,
+        handleAction,
+        isDone,
+    };
+
+    const argsDone = {
+        title: 'Export To Agent',
+        body: 'Do you want to export to Agent',
+        setShowModal,
+        showModal,
+        isDone,
+        setIsDone,
+        handleAction,
     };
     return (
         <div className="wrapper-body">
-            <SidebarAgent />
+            <SidebarWarranty />
             <div className="wrapper-content">
-                <Navbar title="Order" />
+                <Navbar title="Product" />
                 <div className="group-btn">
                     <div className="center">
                         <input type="text" className="input" />
                         <button className="c-btn">Search</button>
                     </div>
-                    <div>
-                        <button className="btn btn-success" onClick={toggleShowCreate}>
-                            Import Product
-                        </button>
-                    </div>
                 </div>
 
-                {body}
+                {showModal &&
+                    (isDone ? <ModalAction {...argsDone} /> : <ModalAction {...argsError} />)}
 
-                {showCreate && <ModalProduct {...argsModalProduct} />}
+                {body}
             </div>
             <Toast
                 show={show}
@@ -210,4 +200,4 @@ const Order = () => {
     );
 };
 
-export default Order;
+export default Product;

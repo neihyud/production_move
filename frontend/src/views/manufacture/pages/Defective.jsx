@@ -50,11 +50,11 @@ const Repair = () => {
     }, []);
 
     const handleEditClick = (row) => async () => {
-        console.log('manufactureId: ', row.id);
+        console.log('manufactureId: ', row._id);
         setShowCreate(!showCreate);
 
         // goi query den database => lay gia tri r dien vao
-        setValue('id', row.id);
+        setValue('id', row._id);
     };
 
     const toggleShowCreate = () => {
@@ -71,7 +71,7 @@ const Repair = () => {
     };
 
     const columns = [
-        { headerName: 'Id', field: 'id', flex: 1 },
+        { headerName: 'Id', field: '_id', flex: 1 },
         {
             headerName: 'Name',
             field: 'productName',
@@ -125,7 +125,7 @@ const Repair = () => {
                     // <GridActionsCellItem
                     //     icon={<DeleteIcon />}
                     //     label="Delete"
-                    //     onClick={handleDeleteClick(row.id)}
+                    //     onClick={handleDeleteClick(row._id)}
                     //     color="inherit"
                     // />,
                 ];

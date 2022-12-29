@@ -17,6 +17,7 @@ import {
     FIND_PRODUCTLINE,
     UPDATE_PRODUCTLINE,
 } from '../contexts/constants';
+import { useEffect } from 'react';
 
 export const AdminContext = React.createContext();
 
@@ -42,7 +43,7 @@ const AdminContextProvider = ({ children }) => {
             if (data.success) {
                 dispatch({
                     type: ACCOUNT_LOADED_SUCCESS,
-                    payload: validateData(data.accounts),
+                    payload: data.accounts,
                 });
             }
         } catch (error) {
@@ -101,7 +102,7 @@ const AdminContextProvider = ({ children }) => {
             if (data.success) {
                 dispatch({
                     type: PRODUCTLINE_LOADED_SUCCESS,
-                    payload: validateData(data.productLines),
+                    payload: data.productLines,
                 });
             }
         } catch (error) {
@@ -154,15 +155,6 @@ const AdminContextProvider = ({ children }) => {
                 ? error.response.data
                 : { success: false, message: 'Server error' };
         }
-    };
-
-    const validateData = (data) => {
-        return data.map((dataItem) => {
-            return {
-                ...dataItem,
-                id: dataItem._id,
-            };
-        });
     };
 
     const value = {

@@ -40,6 +40,18 @@ router.get('/agent/:code/product', agentController.getProducts)
 router.get('/agent/:code/product/warranty', agentController.getProductsWarranty)
 router.get('/agent/:code/product/warranty-done', agentController.getProductsWarrantyDone)
 router.post('/agent/:code/product/warranty/export', agentController.exportProductToWarranty)
+router.post('/agent/:code/product/order', agentController.createOrder)
+router.get('/agent/:code/product/sold', agentController.getProductSold)
+router.post('/agent/:code/product/report', agentController.productReport)
+router.get('/agent/:code/product/recall', agentController.getProductRecall)
+router.post('/agent/:code/product/recall/:productLine', agentController.productRecall)
+router.post('/agent/:code/product/recall/:productLine/:id', agentController.recallToWarranty)
+
+
+// Warranty
+const warrantyController = require('./controller/warranty-center/index')
+router.get('/warranty/:code/product', warrantyController.getProducts)
+router.post('/warranty/:code/product/export-agent', warrantyController.exportToAgent)
 
 // Common
 const commonController = require('./controller/common')

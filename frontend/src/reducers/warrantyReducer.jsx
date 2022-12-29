@@ -7,12 +7,12 @@ import {
     UPDATE_PRODUCT,
     GET_PRODUCT,
     EXPORT_PRODUCT,
-    GET_PRODUCT_ERROR,
+    SET_LOADING,
     GET_WARRANTY,
-    GET_AGENTS,
+    GET_PRODUCTLINE,
 } from '../contexts/constants';
 
-export const manufactureReducer = (state, action) => {
+export const warrantyReducer = (state, action) => {
     const { type, payload } = action;
     switch (type) {
         case PRODUCT_LOADED_SUCCESS:
@@ -38,10 +38,7 @@ export const manufactureReducer = (state, action) => {
         case ADD_PRODUCT:
             return {
                 ...state,
-                products: [
-                    ...state.products,
-                    { ...payload, id: payload._id, note: payload.note.new },
-                ],
+                products: [...state.products, payload],
             };
 
         case DELETE_PRODUCT:
@@ -63,28 +60,31 @@ export const manufactureReducer = (state, action) => {
                 products: newProduct,
             };
 
-        case EXPORT_PRODUCT: // can su de hien thi
+        case EXPORT_PRODUCT:
             const _newProduct = state.products.filter((product) => {
                 return !payload.includes(product._id);
             });
-
-            console.log('_newProduct: ', _newProduct);
             return {
                 ...state,
                 products: _newProduct,
             };
 
-        case GET_PRODUCT_ERROR:
+        case GET_WARRANTY:
             return {
                 ...state,
-                productsError: payload,
-                productLoading: false,
+                warranties: payload,
             };
 
-        case GET_AGENTS:
+        case GET_PRODUCTLINE:
             return {
                 ...state,
-                agents: payload,
+                productLines: payload,
+            };
+        case SET_LOADING:
+            return {
+                ...state,
+                products: [],
+                // productLoading: true,
             };
         default:
             return state;
