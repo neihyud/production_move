@@ -1,4 +1,4 @@
-import './page.css';
+// import './page.css';
 import '../../../assets/css/common.css';
 import SidebarWarranty from '../SidebarWarranty';
 import Navbar from '../../../components/navbar/Navbar';

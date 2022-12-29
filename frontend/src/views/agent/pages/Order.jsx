@@ -1,6 +1,6 @@
 import React from 'react';
 
-import './page.css';
+// import './page.css';
 import '../../../assets/css/common.css';
 import SidebarAgent from '../SidebarAgent';
 import Navbar from '../../../components/navbar/Navbar';

@@ -1,4 +1,4 @@
-import './page.css';
+// import './page.css';
 import '../../../assets/css/common.css';
 import SidebarAdmin from '../SidebarAdmin';
 import Navbar from '../../../components/navbar/Navbar';

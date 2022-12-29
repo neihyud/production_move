@@ -39,7 +39,7 @@ export const adminReducer = (state, action) => {
         case DELETE_ACCOUNT:
             return {
                 ...state,
-                accounts: state.accounts.filter((account) => account._id != payload),
+                accounts: state.accounts.filter((account) => account._id !== payload),
             };
 
         case FIND_ACCOUNT:

@@ -5,7 +5,7 @@ const { default: mongoose } = require('mongoose')
 
 module.exports = {
 
-    // [GET] /admin/account => 1 role ...
+    // [GET] /admin/account
     getAccounts: async (req, res) => {
         const accounts = await Account.find({}).lean()
 
@@ -17,7 +17,10 @@ module.exports = {
         try {
             const { role = '', username = '', password = '' } = req.body
 
-            const account = await Account.findOne({ username }).lean()
+            if (!username.trim() || !password.trim()) {
+                res.status(400).json({success: false, message: "username or password is empty"})
+            }
+            const account = await Account.findOne({ username: username.trim() }).lean()
 
             if (account) {
                 return res.status(400).json({ success: false, message: 'Account is exist' })
@@ -41,19 +44,13 @@ module.exports = {
 
     },
 
-    // [POST] /admin/account
+    // [PUT] /admin/account
     updateAccount: async (req, res) => {
         try {
-            const { role = '', username = '' } = req.body
+            const { role = '' } = req.body
             const _id = req.params.id
 
-            if (!username) {
-                return res
-                    .status(400)
-                    .json({ success: false, message: 'Username is required' })
-            }
-
-            let updatedAccount = await Account.findOneAndUpdate({ username }, { role }, { new: true }).lean()
+            let updatedAccount = await Account.findOneAndUpdate({ _id }, { role }, { new: true }).lean()
 
             if (!updatedAccount) {
                 return res.status(401).json({
@@ -62,20 +59,18 @@ module.exports = {
                 })
             }
 
-            res.status(201).json({ success: true, message: 'Update Account Success', account: updatedAccount })
+            res.status(201).json({ success: true, message: `Updated Account Success`, account: updatedAccount })
         } catch (error) {
             res.status(500).json({ success: false, message: 'Internal Error, Report To Admin', error })
         }
-
-
     },
 
     // [Delete] /admin/account/:id
     deleteAccount: async (req, res) => {
         try {
             const { id = '' } = req.params
-            // let _id = new mongoose.Types.ObjectId(id)
-            const account = await Account.findOne({ _id: id })
+
+            const account = await Account.findOne({ _id: id }).select('username')
 
             if (!account) {
                 return res.status(400).json({ success: false, message: 'Account is not exist' })
@@ -83,7 +78,7 @@ module.exports = {
 
             await account.deleteOne({ _id: id })
 
-            res.status(201).json({ success: true, message: 'Delete Account Success' })
+            res.status(201).json({ success: true, message: `Delete Account ${account.username}Success` })
 
         } catch (error) {
             res.status(500).json({ success: false, message: 'Internal Error, Report To Admin', error })

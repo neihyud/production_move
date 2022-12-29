@@ -21,6 +21,9 @@ const ModalAccount = ({
                         <span className="center title-2">Add Account</span>
                     </>
                 )}
+
+                <input className="row" {...register('_id')} type="hidden" />
+
                 <label className="row">
                     Username
                     <input
@@ -53,7 +56,7 @@ const ModalAccount = ({
                         <option value="admin">Admin</option>
                         <option value="agent">Agent</option>
                         <option value="manufacture">Manufacture</option>
-                        <option value="warranty-center">Warranty Center</option>
+                        <option value="warranty">Warranty Center</option>
                     </select>
                 </label>
 

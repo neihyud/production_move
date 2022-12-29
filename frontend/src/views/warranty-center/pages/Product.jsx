@@ -1,14 +1,15 @@
 import React from 'react';
 
-import './page.css';
+// import './page.css';
 import '../../../assets/css/common.css';
 import SidebarWarranty from '../SidebarWarranty';
 import Navbar from '../../../components/navbar/Navbar';
 import Table from '../../../components/table/Table';
 import Spinner from 'react-bootstrap/Spinner';
 import Toast from 'react-bootstrap/Toast';
-import { Button } from '@mui/material';
-
+import { GridActionsCellItem } from '@mui/x-data-grid';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import { useState, useEffect, useContext } from 'react';
 import { WarrantyContext } from '../../../contexts/WarrantyContext';
 import { AuthContext } from '../../../contexts/AuthContext';
@@ -82,52 +83,55 @@ const Product = () => {
             headerName: 'Actions',
             width: 180,
             cellClassName: 'actions',
-            renderCell: (params) => {
+
+            getActions: ({ row }) => {
                 return [
-                    <Button
-                        size="small"
-                        variant="outlined"
-                        color="error"
-                        onClick={handleProductError(params)}
-                        style={{ marginRight: '8px' }}
-                    >
-                        Error
-                    </Button>,
-                    <Button
-                        size="small"
-                        variant="outlined"
-                        color="success"
-                        onClick={handleProductSuccess(params)}
-                    >
-                        Done
-                    </Button>,
+                    <GridActionsCellItem
+                        icon={<ErrorOutlineIcon style={{ color: 'red' }} />}
+                        label="error"
+                        className="textPrimary"
+                        onClick={handleProductError(row)}
+                        color="inherit"
+                    />,
+                    <GridActionsCellItem
+                        icon={<CheckCircleIcon style={{ color: 'green' }} />}
+                        label="done"
+                        onClick={handleProductSuccess(row)}
+                        color="inherit"
+                    />,
                 ];
             },
         },
     ];
 
-    const handleProductError = (params) => () => {
-        console.log('params', params);
+    const handleProductError = (row) => () => {
+        console.log('params', row);
         setIsDone(false);
         setShowModal(!showModal);
-        idRef.current = params.row._id;
+        idRef.current = row._id;
         console.log('Test');
     };
 
-    const handleProductSuccess = (params) => () => {
+    const handleProductSuccess = (row) => () => {
         setIsDone(true);
         setShowModal(!showModal);
-        idRef.current = params.row._id;
+        idRef.current = row._id;
     };
 
     const handleAction = async (isDone) => {
         const id = idRef.current;
-        if (isDone) {
-            await exportToAgent(code, id);
-        } else {
-            await exportToManufacture(code, id);
-        }
-        setShowModal(!showModal);
+
+        const { success, message, error } = isDone
+            ? await exportToAgent(code, id)
+            : await exportToManufacture(code, id);
+
+        setShowModal(false);
+
+        setShowToast({
+            show: true,
+            message,
+            type: success ? 'success' : 'danger',
+        });
     };
 
     let body = null;
@@ -164,7 +168,6 @@ const Product = () => {
         setShowModal,
         showModal,
         isDone,
-        setIsDone,
         handleAction,
     };
     return (

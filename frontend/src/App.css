@@ -52,3 +52,144 @@
 p {
     margin: 0;
 }
+
+/* ------------------------------- */
+.modal-product-line textarea {
+    border: 0.5px solid lightgray;
+    resize: none;
+    min-height: 150px;
+}
+
+.modal-product-line .content {
+    min-width: 500px;
+    max-height: 600px;
+    overflow-y: auto;
+}
+
+.modal-product-line .content::-webkit-scrollbar {
+    width: 4px;
+}
+
+.modal-product-line .content::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 25px;
+}
+
+select option {
+    text-transform: capitalize;
+}
+
+input::-webkit-input-placeholder,
+textarea::-webkit-input-placeholder {
+    /* Edge */
+    color: rgba(0, 0, 0, 0.2);
+}
+
+/* Handle */
+.modal-product-line .content::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+/* Handle on hover */
+.modal-product-line .content::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+.modal-product-line button {
+    float: right;
+    margin: 20px -10px 5px 0;
+}
+
+.group-btn {
+    display: flex;
+    justify-content: space-between;
+    margin: 15px 0;
+}
+
+.group-btn .input {
+    height: 100%;
+    margin-right: 8px;
+    min-width: 350px;
+}
+
+.modal-product-line .error {
+    color: red;
+    margin-left: -10px;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.overlayProduct {
+    width: 100vw;
+    height: 100vh;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    position: absolute;
+    background: rgba(49, 49, 49, 0.8);
+}
+
+.contentProduct {
+    transform: translate(-50%, -50%);
+}
+
+.row {
+    margin-top: 10px;
+}
+
+label > input,
+label > textarea,
+label > select {
+    border-radius: 10px;
+    height: 40px;
+    margin-top: 5px !important;
+    border: 0.5px solid lightgray;
+}
+
+.main-statistical {
+    overflow: auto;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+}
+
+@media screen and (max-width: 1188px) {
+    .main-statistical {
+        display: block;
+    }
+}
+
+@media screen and (max-width: 1100px) {
+    span,
+    .hide {
+        display: none;
+    }
+
+    li {
+        align-items: center;
+        justify-content: center;
+        padding-left: 0;
+    }
+
+    .logout > div {
+        padding-left: 0;
+        justify-content: center;
+    }
+
+    .icon-logout {
+        margin-left: 0;
+    }
+
+    .top {
+        padding-left: 0;
+    }
+}

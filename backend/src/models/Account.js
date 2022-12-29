@@ -10,14 +10,19 @@ const AccountSchema = new Schema({
         default: ROLE_AGENT
     },
     username: {
-        type: String, required: true
+        type: String, 
+        required: true,
+        index: true
     },
+    
     password: {
         type: String, required: true
     },
+
     imgUri: {
         type: String
     },
+
     status: {
         type: String,
         enum: ['first', 'active', 'inactive'],

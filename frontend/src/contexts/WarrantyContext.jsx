@@ -73,12 +73,12 @@ const WarrantyContextProvider = ({ children }) => {
         try {
             const { data = {} } = await axios.post(
                 `${apiUrl}/warranty/${code}/product/export-agent`,
-                {},
+                { productId },
             );
 
             console.log('data: ', data);
             if (data.success) {
-                dispatch({ type: EXPORT_PRODUCT, payload: productId });
+                dispatch({ type: EXPORT_PRODUCT, payload: [data.product] });
                 return data;
             }
         } catch (error) {

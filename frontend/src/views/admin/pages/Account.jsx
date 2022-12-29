@@ -1,4 +1,4 @@
-import './page.css';
+// // import './page.css';
 import '../../../assets/css/common.css';
 import SidebarAdmin from '../SidebarAdmin';
 import Navbar from '../../../components/navbar/Navbar';
@@ -9,7 +9,7 @@ import Toast from 'react-bootstrap/Toast';
 
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/DeleteOutlined';
-import { GridActionsCellItem, GridRowModes } from '@mui/x-data-grid';
+import { GridActionsCellItem } from '@mui/x-data-grid';
 
 import React from 'react';
 import { useState, useEffect, useContext } from 'react';
@@ -48,14 +48,12 @@ export default function Products() {
 
     const columns = [
         { headerName: 'Id', field: '_id', flex: 1 },
-        { headerName: 'Name', field: 'username', flex: 1, headerAlign: 'center', align: 'center' },
-        { headerName: 'Role', field: 'role', width: 150, headerAlign: 'center', align: 'center' },
+        { headerName: 'Name', field: 'username', flex: 1 },
+        { headerName: 'Role', field: 'role', flex: 1 },
         {
             headerName: 'Status',
             field: 'status',
-            width: 150,
-            headerAlign: 'center',
-            align: 'center',
+            flex: 1,
         },
         {
             field: 'actions',
@@ -84,18 +82,15 @@ export default function Products() {
     ];
 
     const handleEditClick = (row) => () => {
-        console.log(row._id);
         setShowCreate(!showCreate);
         setIsEdit(true);
 
-        // goi query den database => lay gia tri r dien vao
+        setValue('_id', row._id);
         setValue('username', row.username);
-        setValue('password', '');
         setValue('role', row.role);
     };
 
     const handleDeleteClick = (id) => () => {
-        console.log(id);
         setShowModal(true);
         idRef.current = id;
     };
@@ -139,9 +134,7 @@ export default function Products() {
         );
     }
 
-    // Submit btn
     const onSubmit = async (data) => {
-        console.log('data: ', data);
         const { success, message } = isEdit ? await updateAccount(data) : await addAccount(data);
 
         setShowCreate(false);

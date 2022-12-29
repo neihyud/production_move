@@ -1,6 +1,6 @@
 import axios from 'axios';
 import React from 'react';
-import { apiUrl, GET_AGENTS, PRODUCTLINE_LOADED_FAIL } from './constants';
+import { apiUrl, GET_AGENTS, GET_PRODUCTLINE, PRODUCTLINE_LOADED_FAIL } from './constants';
 import { manufactureReducer } from '../reducers/manufactureReducer';
 
 import {
@@ -37,6 +37,7 @@ const ManufactureContextProvider = ({ children }) => {
 
     React.useEffect(() => {
         getAgents();
+        getProductLines();
         return () => {};
     }, []);
 
@@ -122,7 +123,7 @@ const ManufactureContextProvider = ({ children }) => {
 
     const exportProduct = async (code, selected, _data) => {
         try {
-            const { data = {} } = await axios.post(`${apiUrl}/manufacture/${code}/product/export`, {
+            const { data = {} } = await axios.put(`${apiUrl}/manufacture/${code}/product/export`, {
                 productIds: selected,
                 agent: _data.agent,
             });
@@ -158,6 +159,21 @@ const ManufactureContextProvider = ({ children }) => {
             const { data = {} } = await axios.get(`${apiUrl}/common/agent`);
             if (data.success) {
                 dispatch({ type: GET_AGENTS, payload: data.agents });
+                return data;
+            }
+        } catch (error) {
+            return error.response
+                ? error.response.data
+                : { success: false, message: 'Server error' };
+        }
+    };
+
+    const getProductLines = async () => {
+        try {
+            const { data = {} } = await axios.get(`${apiUrl}/common/productLine`);
+            console.log('productlins: ', data.productLines);
+            if (data.success) {
+                dispatch({ type: GET_PRODUCTLINE, payload: data.productLines });
                 return data;
             }
         } catch (error) {

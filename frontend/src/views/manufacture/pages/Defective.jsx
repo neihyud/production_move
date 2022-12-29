@@ -1,6 +1,6 @@
 import React from 'react';
 
-import './page.css';
+// import './page.css';
 import '../../../assets/css/common.css';
 import SidebarManufacture from '../SidebarManufacture';
 import Navbar from '../../../components/navbar/Navbar';
@@ -16,7 +16,6 @@ import { useState, useEffect, useContext } from 'react';
 import { useForm } from 'react-hook-form';
 import { ManufactureContext } from '../../../contexts/ManufactureContext';
 import { AuthContext } from '../../../contexts/AuthContext';
-import ModalMessage from '../../../components/layout/ModalMessage';
 import ModalProduct from '../../../components/modal/ModalProduct';
 
 const Repair = () => {
@@ -185,11 +184,11 @@ const Repair = () => {
                         <input type="text" className="input" />
                         <button className="c-btn">Search</button>
                     </div>
-                    <div>
+                    {/* <div>
                         <button className="btn btn-success" onClick={toggleShowCreate}>
                             Add Product
                         </button>
-                    </div>
+                    </div> */}
                 </div>
 
                 {body}

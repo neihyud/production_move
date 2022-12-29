@@ -1,12 +1,11 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import {  Routes, Route } from 'react-router-dom';
 import Statistical from './pages/Statistical';
 import Accounts from './pages/Account';
 import ProductLine from './pages/ProductLine';
 import AdminContextProvider from '../../contexts/AdminContext';
-// import ProtectedRoute from './components/routing/ProtectedRoute';
+
 import ProtectedRoute from '../../components/routing/ProtectedRoute';
 import Landing from '../../components/layout/Landing';
-import Error from '../../components/layout/Error';
 
 import Auth from '../Auth';
 

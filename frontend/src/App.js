@@ -10,7 +10,7 @@ import Agent from './views/agent/Agent'
 import Warranty from './views/warranty-center/Warranty';
 import { AuthContext } from './contexts/AuthContext';
 
-import { ROLE_ADMIN, ROLE_AGENT, ROLE_MANUFACTURE, ROLE_WARRANTY_CENTER } from './contexts/constants'
+import { ROLE_ADMIN, ROLE_AGENT, ROLE_MANUFACTURE, ROLE_WARRANTY_CENTER, LOCAL_STORAGE_TOKEN_NAME } from './contexts/constants'
 
 function App() {
 
@@ -36,6 +36,10 @@ function App() {
       break;
 
     default:
+      if (localStorage[LOCAL_STORAGE_TOKEN_NAME]) {
+        alert("You don't have access")
+        localStorage[LOCAL_STORAGE_TOKEN_NAME] = ''
+      }
       body = (
         <Routes>
           <Route path="/login" element={<Auth authRoute="login" />} />

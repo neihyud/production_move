@@ -131,7 +131,7 @@ const AgentContextProvider = ({ children }) => {
 
     const exportToWarranty = async (code, selected, _data) => {
         try {
-            const { data = {} } = await axios.post(
+            const { data = {} } = await axios.put(
                 `${apiUrl}/agent/${code}/product/warranty/export`,
                 { productIds: selected, warranty: _data.warranty },
             );
@@ -210,11 +210,22 @@ const AgentContextProvider = ({ children }) => {
 
     const productReport = async (code, productId) => {
         try {
-            const { data = {} } = await axios.post(`${apiUrl}/agent/${code}/product/report`, {
+            const { data = {} } = await axios.put(`${apiUrl}/agent/${code}/product/report`, {
                 productId,
             });
+
             if (data.success) {
-                dispatch({ type: UPDATE_PRODUCT, payload: productId });
+                const _note = data.product.numberWarranty + 1 + `, ${code}`;
+                const product = data.product;
+                const _product = {
+                    ...product,
+                    status: 'error_warranty',
+                    note: _note,
+                    price: product.price.split(' ')[0].replace(/\./g, ''),
+                    numberWarranty: data.product.numberWarranty + 1,
+                };
+
+                dispatch({ type: UPDATE_PRODUCT, payload: _product });
                 return data;
             }
         } catch (error) {
@@ -239,6 +250,8 @@ const AgentContextProvider = ({ children }) => {
                 return data;
             }
         } catch (error) {
+            dispatch({ type: PRODUCT_LOADED_FAIL });
+
             return error.response
                 ? error.response.data
                 : { success: false, message: 'Server error' };
@@ -247,11 +260,28 @@ const AgentContextProvider = ({ children }) => {
 
     const getProductRecall = async (code, _data) => {
         try {
-            const { data = {} } = await axios.post(`${apiUrl}/agent/${code}/product/recall/`, {
-                productLine: _data.productLine,
-            });
+            const { data = {} } = await axios.get(`${apiUrl}/agent/${code}/product/recall`);
             if (data.success) {
-                dispatch({ type: UPDATE_PRODUCT, payload: _data.productLine });
+                dispatch({ type: PRODUCT_LOADED_SUCCESS, payload: data.products });
+                return data;
+            }
+        } catch (error) {
+            dispatch({ type: PRODUCT_LOADED_FAIL });
+            return error.response
+                ? error.response.data
+                : { success: false, message: 'Server error' };
+        }
+    };
+
+    const recallToWarranty = async (code, _data) => {
+        const { productLine, _id } = _data;
+        console.log('_data: ', _data);
+        try {
+            const { data = {} } = await axios.post(
+                `${apiUrl}/agent/${code}/product/recall/${productLine}/${_id}`,
+            );
+            if (data.success) {
+                dispatch({ type: EXPORT_PRODUCT, payload: [_id] });
                 return data;
             }
         } catch (error) {
@@ -261,14 +291,14 @@ const AgentContextProvider = ({ children }) => {
         }
     };
 
-    const recallToWarranty = async (code, _data) => {
-        const { productLine, _id } = _data;
+    const exportToCustomer = async (code, productId) => {
         try {
-            const { data = {} } = await axios.post(
-                `${apiUrl}/agent/${code}/product/recall/${productLine}/${_id}`,
+            const { data = {} } = await axios.put(
+                `${apiUrl}/agent/${code}/product/warranty-done/export`,
+                { productId },
             );
             if (data.success) {
-                dispatch({ type: UPDATE_PRODUCT, payload: _data.product });
+                dispatch({ type: EXPORT_PRODUCT, payload: [productId] });
                 return data;
             }
         } catch (error) {
@@ -299,6 +329,8 @@ const AgentContextProvider = ({ children }) => {
         productReport,
         productRecall,
         recallToWarranty,
+        exportToCustomer,
+        getProductRecall,
     };
     return <AgentContext.Provider value={value}>{children}</AgentContext.Provider>;
 };

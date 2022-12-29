@@ -1,6 +1,6 @@
 import React from 'react';
 
-import './page.css';
+// import './page.css';
 import '../../../assets/css/common.css';
 import SidebarAgent from '../SidebarAgent';
 import Navbar from '../../../components/navbar/Navbar';
@@ -9,15 +9,12 @@ import Spinner from 'react-bootstrap/Spinner';
 import Toast from 'react-bootstrap/Toast';
 
 import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/DeleteOutlined';
 import { GridActionsCellItem } from '@mui/x-data-grid';
 
 import { useState, useEffect, useContext, useLayoutEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { AgentContext } from '../../../contexts/AgentContext';
 import { AuthContext } from '../../../contexts/AuthContext';
-import ModalMessage from '../../../components/layout/ModalMessage';
-import ModalProduct from '../../../components/modal/ModalProduct';
 import ModalExport from '../../../components/modal/ModalExport';
 
 const Product = () => {
@@ -36,7 +33,7 @@ const Product = () => {
         getProducts,
         setLoading,
         createOrder,
-        agentState: { products, productLoading, warranties },
+        agentState: { products, productLoading },
     } = useContext(AgentContext);
 
     const {
@@ -59,19 +56,14 @@ const Product = () => {
 
     const handleEditClick = (row) => async () => {
         console.log('agentId: ', row._id);
-        setShowExport(!showExport);
+        // setShowExport(!showExport);
 
-        // goi query den database => lay gia tri r dien vao
         setValue('id', row._id);
     };
 
     const toggleShowExport = () => {
         setShowExport(!showExport);
-        reset({
-            name: '',
-            password: '',
-            role: 'agent',
-        });
+        reset();
     };
 
     const handleSelectClick = (selected) => {
@@ -84,36 +76,26 @@ const Product = () => {
             headerName: 'Name',
             field: 'productName',
             width: 350,
-            headerAlign: 'left',
-            align: 'left',
         },
         {
             headerName: 'Product Line',
             field: 'productLine',
             width: 150,
-            headerAlign: 'center',
-            align: 'center',
         },
         {
             headerName: 'Price',
             field: 'price',
             flex: 1,
-            headerAlign: 'center',
-            align: 'center',
         },
         {
             headerName: 'Status',
             field: 'status',
             width: 150,
-            headerAlign: 'center',
-            align: 'center',
         },
         {
             headerName: 'Note',
             field: 'note',
             width: 150,
-            headerAlign: 'center',
-            align: 'center',
         },
         {
             field: 'actions',
@@ -130,12 +112,6 @@ const Product = () => {
                         onClick={handleEditClick(row)}
                         color="inherit"
                     />,
-                    // <GridActionsCellItem
-                    //     icon={<DeleteIcon />}
-                    //     label="Delete"
-                    //     onClick={handleDeleteClick(row._id)}
-                    //     color="inherit"
-                    // />,
                 ];
             },
         },

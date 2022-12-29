@@ -108,4 +108,8 @@ a.active > li span {
     .top {
         padding-left: 0;
     }
+
+    .sidebar {
+        width: 70px;
+    }
 }

@@ -68,7 +68,7 @@ const AdminContextProvider = ({ children }) => {
     const updateAccount = async (account) => {
         try {
             const { data = {} } = await axios.put(
-                `${apiUrl}/admin/account/:${account.id}`,
+                `${apiUrl}/admin/account/${account._id}`,
                 account,
             );
             if (data.success) {

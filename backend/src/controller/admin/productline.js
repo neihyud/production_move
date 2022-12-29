@@ -3,7 +3,7 @@ const ProductLine = require('../../models/ProductLine')
 
 module.exports = {
 
-    // [GET] /admin/productLines
+    // [GET] /admin/productLine
     getProductLines: async (req, res) => {
         const productLines = await ProductLine.find({}).lean()
 
@@ -33,7 +33,7 @@ module.exports = {
         }
     },
 
-    // [PUT] /admin/productLines/:id
+    // [PUT] /admin/productLine/:id
     updateProductLine: async (req, res) => {
         try {
             const { code = '', productLine = '', description = '' } = req.body

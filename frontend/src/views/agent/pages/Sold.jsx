@@ -1,6 +1,6 @@
 import React from 'react';
 
-import './page.css';
+// import './page.css';
 import '../../../assets/css/common.css';
 import SidebarAgent from '../SidebarAgent';
 import Navbar from '../../../components/navbar/Navbar';
@@ -10,6 +10,7 @@ import Toast from 'react-bootstrap/Toast';
 
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/DeleteOutlined';
+import ReportGmailerrorredRoundedIcon from '@mui/icons-material/ReportGmailerrorredRounded';
 import { GridActionsCellItem } from '@mui/x-data-grid';
 import Button from '@mui/material/Button';
 
@@ -17,13 +18,10 @@ import { useState, useEffect, useContext, useLayoutEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { AgentContext } from '../../../contexts/AgentContext';
 import { AuthContext } from '../../../contexts/AuthContext';
-import ModalMessage from '../../../components/layout/ModalMessage';
-import ModalProduct from '../../../components/modal/ModalProduct';
 import ModalExport from '../../../components/modal/ModalExport';
 
 const Product = () => {
     const [showExport, setShowExport] = useState(false);
-    const [selected, setSelected] = useState([]);
 
     const {
         authState: {
@@ -35,10 +33,9 @@ const Product = () => {
         showToast: { show, message, type },
         setShowToast,
         setLoading,
-        createOrder,
         getProductSold,
         productReport,
-        agentState: { products, productLoading, warranties },
+        agentState: { products, productLoading },
     } = useContext(AgentContext);
 
     const {
@@ -59,25 +56,8 @@ const Product = () => {
         return () => {};
     }, []);
 
-    const handleEditClick = (row) => async () => {
-        console.log('agentId: ', row);
-        setShowExport(!showExport);
-
-        // goi query den database => lay gia tri r dien vao
-        setValue('_id', row.id);
-    };
-
     const toggleShowExport = () => {
         setShowExport(!showExport);
-        reset({
-            name: '',
-            password: '',
-            role: 'agent',
-        });
-    };
-
-    const handleSelectClick = (selected) => {
-        setSelected(selected);
     };
 
     const columns = [
@@ -93,29 +73,21 @@ const Product = () => {
             headerName: 'Product Line',
             field: 'productLine',
             width: 150,
-            headerAlign: 'center',
-            align: 'center',
         },
         {
             headerName: 'Price',
             field: 'price',
-            flex: 1,
-            headerAlign: 'center',
-            align: 'center',
+            width: 150,
         },
         {
             headerName: 'Status',
             field: 'status',
             width: 150,
-            headerAlign: 'center',
-            align: 'center',
         },
         {
             headerName: 'Note',
             field: 'note',
-            width: 150,
-            headerAlign: 'center',
-            align: 'center',
+            flex: 1,
         },
         {
             field: 'actions',
@@ -123,35 +95,37 @@ const Product = () => {
             headerName: 'Actions',
             width: 180,
             cellClassName: 'actions',
-            renderCell: (params) => {
+            getActions: ({ row }) => {
+                const isSold = row.status === 'sold' ? false : true;
                 return [
-                    <Button
-                        size="small"
-                        variant="outlined"
-                        color="success"
-                        onClick={handleEditClick(params)}
-                        style={{ marginRight: '5px' }}
-                    >
-                        Info
-                    </Button>,
-                    <Button
-                        size="small"
-                        variant="outlined"
-                        color="success"
-                        onClick={handleEditClick(params)}
-                    >
-                        Report
-                    </Button>,
+                    <GridActionsCellItem
+                        icon={
+                            <ReportGmailerrorredRoundedIcon
+                                style={{ color: isSold ? '#ddd' : 'red', fontSize: '25px' }}
+                            />
+                        }
+                        label="report"
+                        className="textPrimary"
+                        onClick={handleReportClick(row)}
+                        color="inherit"
+                        disabled={isSold}
+                    />,
                 ];
             },
         },
     ];
 
+    const handleReportClick = (row) => () => {
+        console.log('row: ', row);
+        setShowExport(!showExport);
+        setValue('_id', row._id);
+    };
+
     const onSubmit = async (data) => {
         console.log('data: ', data);
 
         const productId = data._id;
-        const { success, message, error } = await productReport(code, productId, data);
+        const { success, message } = await productReport(code, productId, data);
 
         setShowExport(false);
         setShowToast({
@@ -160,7 +134,6 @@ const Product = () => {
             type: success ? 'success' : 'danger',
         });
         reset(data);
-        setSelected([]);
     };
 
     let body = null;
@@ -177,7 +150,6 @@ const Product = () => {
                     columns,
                     rows: products,
                     checkboxSelection: false,
-                    handleSelectClick,
                 }}
             />
         );
@@ -194,7 +166,7 @@ const Product = () => {
         <div className="wrapper-body">
             <SidebarAgent />
             <div className="wrapper-content">
-                <Navbar title="Product" />
+                <Navbar title="Sold" />
                 <div className="group-btn">
                     <div className="center">
                         <input type="text" className="input" />

@@ -17,7 +17,7 @@ export const SET_LOADING = "SET_LOADING"
 export const ROLE_ADMIN = 'admin'
 export const ROLE_MANUFACTURE = 'manufacture'
 export const ROLE_AGENT = 'agent'
-export const ROLE_WARRANTY_CENTER = 'warranty-center'
+export const ROLE_WARRANTY_CENTER = 'warranty'
 
 // Admin - account
 export const ACCOUNT_LOADED_SUCCESS = "ACCOUNT_LOADED_SUCCESS"

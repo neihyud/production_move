@@ -17,15 +17,15 @@ const { STATUS_PRODUCT_AGENT,
 const ProductSchema = new Schema({
     productName: {
         type: String,
-        // require: true
+        require: true
     },
     productLine: {
         type: String,
-        // required: true
+        required: true
     },
     price: {
         type: String,
-        // required: true,
+        required: true,
         default: '10'
     },
     status: {

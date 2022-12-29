@@ -24,7 +24,17 @@ module.exports = {
             const { code } = req.params
             const products = await Product.find({ 'note.new': code, status: STATUS_PRODUCT_NEW }).lean()
 
-            const _products = validateProduct(products)
+            // const _products = validateProduct(products)
+
+            const _products = products.map((product) => {
+                const status = product.status
+                return {
+                    ...product,
+                    note: product.note[status],
+                    price: product.price.split(' ')[0].replace(/\./g, '')
+
+                }
+            })
 
             res.status(200).json({ success: true, message: "Get Product Success", products: _products })
         } catch (error) {
@@ -69,7 +79,11 @@ module.exports = {
                 saddleHeight = '',
                 chassisHeight = '',
                 cylinderCapacity = '',
-                bootSystem = '', productName = '', quantity = 0 } = req.body;
+                bootSystem = '', productName = '', quantity = 1 } = req.body;
+
+            if (!productLine || !productName) {
+                return res.status(400).json({ success: false, message: 'productLine or productName is empty' })
+            }
 
             const _product = await Product.findOne({ productName, 'note.new': code }).select('quantity').lean()
 
@@ -87,7 +101,6 @@ module.exports = {
             })
 
             await _newProduct.save()
-
 
             const _newProductDetail = new ProductDetail({
                 productId: _newProduct._id,
@@ -112,6 +125,7 @@ module.exports = {
         }
     },
 
+    // [PUT] /manufacture/:code/product/:id
     updateProduct: async (req, res) => {
         const { code, id } = req.params
         try {
@@ -128,7 +142,7 @@ module.exports = {
                 saddleHeight = '',
                 chassisHeight = '',
                 cylinderCapacity = '',
-                bootSystem = '', productName = '', quantity = 0 } = req.body;
+                bootSystem = '', productName = '', quantity = 1 } = req.body;
 
             let updateProduct = await Product.findOneAndUpdate({ _id: id }, {
                 productName,
@@ -182,17 +196,17 @@ module.exports = {
         }
     },
 
-    // [POST] /manufacture/:code/product/export
+    // [PUT] /manufacture/:code/product/export
     exportProductForAgent: async (req, res) => {
         try {
             const { code } = req.params
 
             const { productIds = [], agent } = req.body;
 
-            await Product.updateMany({ _id: { $in: productIds }, 'note.new': code }, { 'note.agent': agent, status: STATUS_PRODUCT_AGENT })
+            await Product.updateMany({ _id: { $in: productIds }, 'note.new': code }, {
+                'note.agent': agent, status: STATUS_PRODUCT_AGENT
+            })
 
-            // const products = await Product.find({ 'note.new': code }).lean()
-            // const _products = validateProduct(products)
             res.status(200).json({ success: true, message: 'Export product success', products: productIds })
 
         } catch (error) {

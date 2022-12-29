@@ -1,6 +1,6 @@
 import React from 'react';
 
-import './page.css';
+// import './page.css';
 import '../../../assets/css/common.css';
 import SidebarAgent from '../SidebarAgent';
 import Navbar from '../../../components/navbar/Navbar';
@@ -8,15 +8,10 @@ import Table from '../../../components/table/Table';
 import Spinner from 'react-bootstrap/Spinner';
 import Toast from 'react-bootstrap/Toast';
 
-import EditIcon from '@mui/icons-material/Edit';
-import { GridActionsCellItem } from '@mui/x-data-grid';
-import Button from '@mui/material/Button';
-
 import { useState, useEffect, useContext, useLayoutEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { AgentContext } from '../../../contexts/AgentContext';
 import { AuthContext } from '../../../contexts/AuthContext';
-import ModalMessage from '../../../components/layout/ModalMessage';
 import ModalExport from '../../../components/modal/ModalExport';
 
 const Warranty = () => {
@@ -82,57 +77,47 @@ const Warranty = () => {
         {
             headerName: 'Name',
             field: 'productName',
-            width: 150,
-            headerAlign: 'center',
-            align: 'center',
+            width: 250,
         },
         {
             headerName: 'Product Line',
             field: 'productLine',
             width: 150,
-            headerAlign: 'center',
-            align: 'center',
         },
         {
             headerName: 'Price',
             field: 'price',
             flex: 1,
-            headerAlign: 'center',
-            align: 'center',
         },
         {
             headerName: 'Status',
             field: 'status',
             width: 150,
-            headerAlign: 'center',
-            align: 'center',
         },
         {
             headerName: 'Note',
             field: 'note',
             width: 150,
-            headerAlign: 'center',
-            align: 'center',
         },
-        {
-            field: 'actions',
-            type: 'actions',
-            headerName: 'Actions',
-            width: 150,
-            cellClassName: 'actions',
-            renderCell: (params) => {
-                return (
-                    <Button
-                        size="small"
-                        variant="outlined"
-                        color="success"
-                        onClick={handleWarranty(params)}
-                    >
-                        Warranty
-                    </Button>
-                );
-            },
-        },
+        // {
+        //     field: 'actions',
+        //     type: 'actions',
+        //     headerName: 'Actions',
+        //     width: 150,
+        //     cellClassName: 'actions',
+        //     renderCell: (params) => {
+        //         return (
+        //             <Button
+        //                 size="small"
+        //                 variant="outlined"
+        //                 color="success"
+        //                 onClick={handleWarranty(params)}
+        //             >
+        //                 Warranty
+        //             </Button>
+        //         );
+        //     },
+        // },
     ];
 
     const handleWarranty = (params) => () => {
@@ -143,7 +128,7 @@ const Warranty = () => {
     const onSubmit = async (data) => {
         console.log('data: ', data);
 
-        const { success, message, error } = await exportToWarranty(code, selected, data);
+        const { success, message } = await exportToWarranty(code, selected, data);
 
         setShowExport(false);
         setShowToast({
@@ -206,6 +191,7 @@ const Warranty = () => {
 
                 {showExport && (
                     <ModalExport {...argsModalProduct}>
+                        <span className="center title-2">Export To Warranty</span>
                         <label className="row">
                             Warranty
                             <select {...register('warranty')} className="">

@@ -4,72 +4,64 @@ const { Schema } = mongoose
 const ProductDetailSchema = new Schema({
     productId: {
         type: mongoose.Types.ObjectId,
-        ref: 'Product',
         required: true,
         index: true
     },
     description: {
         type: String,
+        default: ' '
     },
     // loai dong co
     engineType: {
         type: String,
-        // required: true,
+        default: 'Empty'
     },
     // dung tich binh xang
     petrolTankCapacity: {
         type: String,
-        // required: true
+        required: true
     },
     // cong suat toi da
     maximumCapacity: {
         type: String,
-        // required: true
+        required: true
     },
     // tieu thu tai nguyen
     rawMaterialConsumption: {
         type: String,
-        // required: true
+        required: true
     },
     // dung tich dau may
     engineOilCapacity: {
         type: String,
-        // required: true
+        required: true
     },
     // kich thuoc: dai rong cao
     sizeLongLargeHeigh: {
         type: String,
-        // required: true
+        required: true
     },
     // chieu cao yen xe
     saddleHeight: {
         type: String,
-        // required: true
+        default: 'Empty'
     },
     // chieu cao gam xe
     chassisHeight: {
         type: String,
-        // required: true
+        default: 'Empty'
     },
     // dung tich xi lanh
     cylinderCapacity: {
         type: String,
-        // required: true
+        default: "Empty"
     },
     // he thong khoi dong
     bootSystem: {
         type: String,
-        // required: true
+        default: 'Empty'
     },
 
 })
 
 module.exports = mongoose.model('ProductDetail', ProductDetailSchema)
-
-
-
-// const productItem = {
-//     name, description, price, imageUrl, engineType, petrolTankCapacity,
-//     maximumCapacity, rawMaterialConsumption, engineOilCapacity,
-//     sizeLongLargeHeigh, saddleHeight, chassisHeight, cylinderCapacity, bootSystem, warrantyPeriod
-// }

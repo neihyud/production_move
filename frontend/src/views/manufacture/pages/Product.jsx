@@ -1,4 +1,4 @@
-import './page.css';
+// import './page.css';
 import '../../../assets/css/common.css';
 import SidebarManufacture from '../SidebarManufacture';
 import Navbar from '../../../components/navbar/Navbar';
@@ -46,7 +46,7 @@ export default function Products() {
         exportProduct,
         showToast: { show, message, type },
         setShowToast,
-        manufactureState: { products, productLoading, product, agents },
+        manufactureState: { products, productLoading, product, agents, productLines },
     } = useContext(ManufactureContext);
 
     const {
@@ -74,50 +74,38 @@ export default function Products() {
             headerName: 'Name',
             field: 'productName',
             width: 250,
-            headerAlign: 'left',
-            align: 'left',
         },
         {
             headerName: 'Product Line',
             field: 'productLine',
             width: 150,
-            headerAlign: 'center',
-            align: 'center',
         },
         {
             headerName: 'Price',
             field: 'price',
             flex: 1,
-            headerAlign: 'center',
-            align: 'center',
         },
         {
             headerName: 'Quantity',
             field: 'quantity',
             flex: 1,
-            headerAlign: 'center',
-            align: 'center',
+            headerAlign: 'right',
+            align: 'right',
         },
         {
             headerName: 'Status',
             field: 'status',
             width: 150,
-            headerAlign: 'center',
-            align: 'center',
         },
         {
             headerName: 'Note',
             field: 'note',
             width: 150,
-            headerAlign: 'center',
-            align: 'center',
         },
         {
             headerName: 'CreatedAt',
             field: 'createdAt',
-            width: 150,
-            headerAlign: 'center',
-            align: 'center',
+            width: 100,
         },
         {
             field: 'actions',
@@ -152,9 +140,8 @@ export default function Products() {
 
         let { product } = await getProduct(code, row._id);
 
-        // goi query den database => lay gia tri r dien vao
-        let _price = product.price.replace(/\./g, '');
-        console.log('product: ', _price);
+        let _price = product.price.split(' ')[0].replace(/\./g, '');
+        console.log(`product: ${product.price}  `, _price);
 
         setValue('id', row._id);
         setValue('productName', product.productName);
@@ -199,6 +186,7 @@ export default function Products() {
     const toggleShowCreate = () => {
         setShowCreate(!showCreate);
         setTypeAction(TYPE_ACTION_ADD);
+        reset();
     };
 
     const toggleShowExport = () => {
@@ -281,6 +269,7 @@ export default function Products() {
         errors,
         onSubmit,
         typeAction,
+        productLines,
     };
 
     const argsModalExport = {

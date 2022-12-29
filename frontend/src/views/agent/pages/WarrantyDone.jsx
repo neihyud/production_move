@@ -1,6 +1,6 @@
 import React from 'react';
 
-import './page.css';
+// import './page.css';
 import '../../../assets/css/common.css';
 import SidebarAgent from '../SidebarAgent';
 import Navbar from '../../../components/navbar/Navbar';
@@ -8,20 +8,19 @@ import Table from '../../../components/table/Table';
 import Spinner from 'react-bootstrap/Spinner';
 import Toast from 'react-bootstrap/Toast';
 
-import EditIcon from '@mui/icons-material/Edit';
-import { GridActionsCellItem } from '@mui/x-data-grid';
 import Button from '@mui/material/Button';
-
+import { DataGrid, GridActionsCellItem } from '@mui/x-data-grid';
+import SecurityIcon from '@mui/icons-material/Security';
+import DoneIcon from '@mui/icons-material/Done';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { useState, useEffect, useContext, useLayoutEffect } from 'react';
-import { useForm } from 'react-hook-form';
 import { AgentContext } from '../../../contexts/AgentContext';
 import { AuthContext } from '../../../contexts/AuthContext';
-import ModalMessage from '../../../components/layout/ModalMessage';
-import ModalExport from '../../../components/modal/ModalExport';
+
+import ModalAction from '../../../components/modal/ModalAction';
 
 const WarrantyDone = () => {
-    const [showCreate, setShowCreate] = useState(false);
-    const [selected, setSelected] = useState([]);
+    const [showModal, setShowModal] = useState(false);
 
     const {
         authState: {
@@ -34,17 +33,11 @@ const WarrantyDone = () => {
         setShowToast,
         getProductWarrantyDone,
         setLoading,
-        agentState: { products, productLoading, productLines },
+        exportToCustomer,
+        agentState: { products, productLoading },
     } = useContext(AgentContext);
 
-    const {
-        register,
-        handleSubmit,
-        formState: { errors },
-        reset,
-        setValue,
-    } = useForm();
-
+    const idRef = React.useRef();
     useLayoutEffect(() => {
         setLoading();
         return () => {};
@@ -55,24 +48,8 @@ const WarrantyDone = () => {
         return () => {};
     }, []);
 
-    const handleEditClick = (row) => async () => {
-        console.log('agentId: ', row._id);
-        setShowCreate(!showCreate);
-
-        setValue('id', row._id);
-    };
-
     const toggleShowCreate = () => {
-        setShowCreate(!showCreate);
-        reset({
-            name: '',
-            password: '',
-            role: 'agent',
-        });
-    };
-
-    const handleSelectClick = (selected) => {
-        setSelected(selected);
+        setShowModal(!showModal);
     };
 
     const columns = [
@@ -80,9 +57,9 @@ const WarrantyDone = () => {
         {
             headerName: 'Name',
             field: 'productName',
-            width: 150,
-            headerAlign: 'center',
-            align: 'center',
+            width: 350,
+            headerAlign: 'left',
+            align: 'left',
         },
         {
             headerName: 'Product Line',
@@ -118,39 +95,36 @@ const WarrantyDone = () => {
             headerName: 'Actions',
             width: 150,
             cellClassName: 'actions',
-            renderCell: (params) => {
-                return (
-                    <Button
-                        size="small"
-                        variant="outlined"
-                        color="success"
-                        onClick={handleWarranty(params)}
-                    >
-                        Warranty
-                    </Button>
-                );
+            getActions: (params) => {
+                return [
+                    <GridActionsCellItem
+                        icon={<CheckCircleIcon style={{ color: 'green' }} />}
+                        onClick={handleReturnCustomerClick(params)}
+                        label="Done"
+                    ></GridActionsCellItem>,
+                ];
             },
         },
     ];
 
-    const handleWarranty = (params) => () => {
+    const handleReturnCustomerClick = (params) => () => {
         toggleShowCreate();
+        idRef.current = params.row._id;
         console.log('params: ', params);
     };
 
-    const onSubmit = async (data) => {
-        console.log('data: ', data);
+    const handleReturnCustomer = async () => {
+        const productId = idRef.current;
 
-        const { success, message, error } = await WarrantyDone();
+        const { success, message, error } = await exportToCustomer(code, productId);
 
-        setShowCreate(false);
+        setShowModal(false);
+
         setShowToast({
             show: true,
             message,
             type: success ? 'success' : 'danger',
         });
-        reset(data);
-        setSelected([]);
     };
 
     let body = null;
@@ -166,30 +140,32 @@ const WarrantyDone = () => {
                 {...{
                     columns,
                     rows: products,
-                    handleSelectClick,
-                    checkboxSelection: true,
+                    handleSelectClick: null,
+                    checkboxSelection: false,
                 }}
             />
         );
     }
-    const argsModalProduct = {
-        toggleShowCreate,
-        handleSubmit,
-        register,
-        errors,
-        onSubmit,
+
+    const argsDone = {
+        title: 'Return To Customer',
+        body: 'Do you want to return to Customer',
+        setShowModal,
+        showModal,
+        isDone: true,
+        handleAction: handleReturnCustomer,
     };
     return (
         <div className="wrapper-body">
             <SidebarAgent />
             <div className="wrapper-content">
-                <Navbar title="Warranty" />
+                <Navbar title="Warranty Done" />
                 <div className="group-btn">
                     <div className="center">
                         <input type="text" className="input" />
                         <button className="c-btn">Search</button>
                     </div>
-                    <div>
+                    {/* <div>
                         <button
                             className="btn btn-success"
                             onClick={toggleShowCreate}
@@ -197,28 +173,10 @@ const WarrantyDone = () => {
                         >
                             Warranty
                         </button>
-                    </div>
+                    </div> */}
                 </div>
-
                 {body}
-
-                {showCreate && (
-                    <ModalExport {...argsModalProduct}>
-                        <label className="row">
-                            ProductLine
-                            <select {...register('warranty')} className="">
-                                {productLines.map((productLine, index) => {
-                                    return (
-                                        <option value={productLine.username} key={index}>
-                                            {productLine.username}
-                                        </option>
-                                    );
-                                })}
-                            </select>
-                        </label>
-                        <button className="btn btn-success">Export</button>
-                    </ModalExport>
-                )}
+                {showModal && <ModalAction {...argsDone} />}
             </div>
             <Toast
                 show={show}

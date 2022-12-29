@@ -18,13 +18,6 @@ export default function SidebarAdmin() {
                 </li>
             </NavLink>
 
-            <NavLink style={{ textDecoration: 'none' }} to="/product">
-                <li title="product">
-                    <RiProductHuntLine className="icon" />
-                    <span>Product</span>
-                </li>
-            </NavLink>
-
             <NavLink style={{ textDecoration: 'none' }} to="/productLine">
                 <li title="productLine">
                     <FaMotorcycle className="icon" />

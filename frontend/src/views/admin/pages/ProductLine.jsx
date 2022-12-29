@@ -1,4 +1,4 @@
-import './page.css';
+// import './page.css';
 import '../../../assets/css/common.css';
 import SidebarAdmin from '../SidebarAdmin';
 import Navbar from '../../../components/navbar/Navbar';
@@ -21,7 +21,7 @@ export default function Products() {
     const [showCreate, setShowCreate] = useState(false);
     const [showModal, setShowModal] = React.useState(false);
     const [isEdit, setIsEdit] = React.useState(false);
-    const [alert, setAlert] = useState(null);
+
     let idRef = React.useRef(0);
 
     const {
@@ -49,20 +49,16 @@ export default function Products() {
 
     const columns = [
         { headerName: 'Id', field: '_id', flex: 1 },
-        { headerName: 'Code', field: 'code', width: 150, headerAlign: 'center', align: 'center' },
+        { headerName: 'Code', field: 'code', width: 180 },
         {
             headerName: 'Name',
             field: 'productLine',
             width: 200,
-            headerAlign: 'center',
-            align: 'center',
         },
         {
             headerName: 'Description',
             field: 'description',
             flex: 1,
-            headerAlign: 'center',
-            align: 'center',
         },
         {
             field: 'actions',
@@ -95,7 +91,6 @@ export default function Products() {
         setShowCreate(!showCreate);
         setIsEdit(true);
 
-        // goi query den database => lay gia tri r dien vao
         setValue('code', row.code);
         setValue('productLine', row.productLine);
         setValue('description', row.description);
@@ -190,7 +185,7 @@ export default function Products() {
                         <button className="c-btn">Search</button>
                     </div>
                     <button className="btn btn-success" onClick={toggleShowCreate}>
-                        Add Productline
+                        Add ProductLine
                     </button>
                 </div>
 

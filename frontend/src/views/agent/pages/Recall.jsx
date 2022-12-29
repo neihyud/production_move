@@ -1,6 +1,6 @@
 import React from 'react';
 
-import './page.css';
+// import './page.css';
 import '../../../assets/css/common.css';
 import SidebarAgent from '../SidebarAgent';
 import Navbar from '../../../components/navbar/Navbar';
@@ -8,34 +8,34 @@ import Table from '../../../components/table/Table';
 import Spinner from 'react-bootstrap/Spinner';
 import Toast from 'react-bootstrap/Toast';
 
-import EditIcon from '@mui/icons-material/Edit';
+import CallMadeRoundedIcon from '@mui/icons-material/CallMadeRounded';
 import { GridActionsCellItem } from '@mui/x-data-grid';
-import Button from '@mui/material/Button';
 
 import { useState, useEffect, useContext, useLayoutEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { AgentContext } from '../../../contexts/AgentContext';
 import { AuthContext } from '../../../contexts/AuthContext';
-import ModalMessage from '../../../components/layout/ModalMessage';
 import ModalExport from '../../../components/modal/ModalExport';
+import ModalAction from '../../../components/modal/ModalAction';
 
 const Recall = () => {
     const [showExport, setShowExport] = useState(false);
-    const [selected, setSelected] = useState([]);
+    const [showModal, setShowModal] = useState(false);
 
     const {
         authState: {
             user: { username: code },
         },
     } = useContext(AuthContext);
+    let idRef = React.useRef(0);
 
     const {
         showToast: { show, message, type },
         setShowToast,
-        getProductWarrantyDone,
         setLoading,
         productRecall,
         recallToWarranty,
+        getProductRecall,
         agentState: { products, productLoading, productLines },
     } = useContext(AgentContext);
 
@@ -44,7 +44,6 @@ const Recall = () => {
         handleSubmit,
         formState: { errors },
         reset,
-        setValue,
     } = useForm();
 
     useLayoutEffect(() => {
@@ -53,29 +52,12 @@ const Recall = () => {
     }, []);
 
     useEffect(() => {
-        getProductWarrantyDone(code);
+        getProductRecall(code);
         return () => {};
     }, []);
 
-    const handleEditClick = (row) => async () => {
-        console.log('agentId: ', row._id);
-        setShowExport(!showExport);
-
-        setValue('id', row._id);
-    };
-
     const toggleShowExport = () => {
-        console.log('productline: ', productLines);
         setShowExport(!showExport);
-        reset({
-            name: '',
-            password: '',
-            role: 'agent',
-        });
-    };
-
-    const handleSelectClick = (selected) => {
-        setSelected(selected);
     };
 
     const columns = [
@@ -121,31 +103,37 @@ const Recall = () => {
             headerName: 'Actions',
             width: 150,
             cellClassName: 'actions',
-            renderCell: (params) => {
-                return (
-                    <Button
-                        size="small"
-                        variant="outlined"
-                        color="success"
-                        onClick={handleWarranty(params.row)}
-                    >
-                        Warranty
-                    </Button>
-                );
+            getActions: ({ row }) => {
+                return [
+                    <GridActionsCellItem
+                        icon={<CallMadeRoundedIcon style={{ color: 'red' }} />}
+                        label="Call"
+                        onClick={handleWarrantyClick(row)}
+                        color="inherit"
+                    />,
+                ];
             },
         },
     ];
 
-    const handleWarranty = (row) => () => {
-        // toggleShowExport();
-        recallToWarranty(code, row)
-        console.log('paramtHandnle Warranty: ', row);
+    const handleWarrantyClick = (row) => () => {
+        idRef.current = row;
+        setShowModal(!showModal);
+        console.log('products: ', products);
+    };
+
+    const handleWarranty = async () => {
+        const { success, message } = await recallToWarranty(code, idRef.current);
+        setShowModal(false);
+        setShowToast({
+            show: true,
+            message,
+            type: success ? 'success' : 'danger',
+        });
     };
 
     const onSubmit = async (data) => {
-        console.log('data: ', data);
-
-        const { success, message, error } = await productRecall(code, data);
+        const { success, message } = await productRecall(code, data);
 
         setShowExport(false);
         setShowToast({
@@ -154,7 +142,6 @@ const Recall = () => {
             type: success ? 'success' : 'danger',
         });
         reset(data);
-        setSelected([]);
     };
 
     let body = null;
@@ -170,7 +157,6 @@ const Recall = () => {
                 {...{
                     columns,
                     rows: products,
-                    handleSelectClick,
                     checkboxSelection: true,
                 }}
             />
@@ -182,6 +168,15 @@ const Recall = () => {
         register,
         errors,
         onSubmit,
+    };
+
+    const argsDone = {
+        title: 'Do you want recall',
+        body: 'Do you want to export to Agent',
+        setShowModal,
+        showModal,
+        isDone: true,
+        handleAction: handleWarranty,
     };
     return (
         <div className="wrapper-body">
@@ -219,6 +214,8 @@ const Recall = () => {
                         <button className="btn btn-success">Export</button>
                     </ModalExport>
                 )}
+
+                {showModal && <ModalAction {...argsDone} />}
             </div>
             <Toast
                 show={show}

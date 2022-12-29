@@ -10,6 +10,7 @@ import {
     GET_PRODUCT_ERROR,
     GET_WARRANTY,
     GET_AGENTS,
+    GET_PRODUCTLINE,
 } from '../contexts/constants';
 
 export const manufactureReducer = (state, action) => {
@@ -85,6 +86,11 @@ export const manufactureReducer = (state, action) => {
             return {
                 ...state,
                 agents: payload,
+            };
+        case GET_PRODUCTLINE:
+            return {
+                ...state,
+                productLines: payload,
             };
         default:
             return state;

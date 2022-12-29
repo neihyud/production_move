@@ -1,8 +1,6 @@
 import React from 'react';
-import {
-    TYPE_ACTION_ADD,
-    TYPE_ACTION_EDIT,
-} from '../../contexts/constants';
+import { useContext } from 'react';
+import { TYPE_ACTION_ADD, TYPE_ACTION_EDIT } from '../../contexts/constants';
 
 const ModalProduct = ({
     toggleShowCreate,
@@ -11,7 +9,9 @@ const ModalProduct = ({
     errors,
     onSubmit,
     typeAction,
+    productLines,
 }) => {
+    console.log('productLIne modal: ', productLines);
     return (
         <div className="modal-product-line">
             <div onClick={toggleShowCreate} className="overlay"></div>
@@ -43,7 +43,7 @@ const ModalProduct = ({
                             Price
                             <input
                                 {...register('price', { required: true })}
-                                placeholder="Honda"
+                                placeholder="25"
                                 className="input"
                                 type="number"
                                 min="0"
@@ -53,19 +53,21 @@ const ModalProduct = ({
                         <label className="row">
                             ProductLine
                             <select {...register('productLine')} className="">
-                                <option value="XM_Honda">Honda</option>
-                                <option value="XM_Yamaha">Yamaha</option>
-                                <option value="XM_Suzuki">Suzuki</option>
-                                <option value="XM_Sym">Sym</option>
+                                {productLines.map((productLine, index) => {
+                                    return (
+                                        <option value={productLine.code} key={index}>
+                                            {productLine.productLine}
+                                        </option>
+                                    );
+                                })}
                             </select>
                         </label>
                         <label className="row">
                             Image Uri
                             <input
                                 {...register('imageUri', { required: true })}
-                                placeholder="Honda"
+                                placeholder="..."
                                 className="input"
-                                type="String"
                             />
                         </label>
                         {errors.imageUri && <span className="error">This field is required</span>}
@@ -73,9 +75,10 @@ const ModalProduct = ({
                             Quantity Product
                             <input
                                 {...register('quantity', { required: true })}
-                                placeholder="Honda"
+                                placeholder="25"
                                 className="input"
                                 type="number"
+                                min="1"
                             />
                         </label>
                         {errors.price && <span className="error">This field is required</span>}
@@ -95,7 +98,7 @@ const ModalProduct = ({
                             Engine
                             <input
                                 {...register('engineType', { required: true })}
-                                placeholder="Honda"
+                                placeholder="Xăng, 4 kỳ, 1 xilanh, làm mát bằng không khí"
                                 className="input"
                             />
                         </label>
@@ -104,7 +107,7 @@ const ModalProduct = ({
                             Maximum Capacity
                             <input
                                 {...register('maximumCapacity', { required: true })}
-                                placeholder="Honda"
+                                placeholder="6,46 kW / 7.500 vòng/phút"
                                 className="input"
                             />
                         </label>
@@ -115,7 +118,7 @@ const ModalProduct = ({
                             Engine Oil Capacity
                             <input
                                 {...register('engineOilCapacity', { required: true })}
-                                placeholder="Honda"
+                                placeholder="0,8 lít khi thay nhớt 1,0 lít khi rã máy"
                                 className="input"
                             />
                         </label>
@@ -126,7 +129,7 @@ const ModalProduct = ({
                             Petrol Tank Capacity
                             <input
                                 {...register('petrolTankCapacity', { required: true })}
-                                placeholder="Honda"
+                                placeholder="4,0 L"
                                 className="input"
                             />
                         </label>
@@ -137,7 +140,7 @@ const ModalProduct = ({
                             Raw Material Consumption
                             <input
                                 {...register('rawMaterialConsumption', { required: true })}
-                                placeholder="Honda"
+                                placeholder="1,7l/100 km"
                                 className="input"
                             />
                         </label>
@@ -148,7 +151,7 @@ const ModalProduct = ({
                             Size Long x Large x Height
                             <input
                                 {...register('sizeLongLargeHeigh', { required: true })}
-                                placeholder="Honda"
+                                placeholder="1.921 mm x 709 mm x 1.081 mm"
                                 className="input"
                             />
                         </label>
@@ -159,7 +162,7 @@ const ModalProduct = ({
                             Saddle Height
                             <input
                                 {...register('saddleHeight', { required: true })}
-                                placeholder="Honda"
+                                placeholder="760mm"
                                 className="input"
                             />
                         </label>
@@ -170,7 +173,7 @@ const ModalProduct = ({
                             Chassis Height
                             <input
                                 {...register('chassisHeight', { required: true })}
-                                placeholder="Honda"
+                                placeholder="135mm"
                                 className="input"
                             />
                         </label>
@@ -181,7 +184,7 @@ const ModalProduct = ({
                             Cylinder Capacity
                             <input
                                 {...register('cylinderCapacity', { required: true })}
-                                placeholder="Honda"
+                                placeholder="109,2 cm3"
                                 className="input"
                             />
                         </label>
@@ -192,7 +195,7 @@ const ModalProduct = ({
                             Boot System
                             <input
                                 {...register('bootSystem', { required: true })}
-                                placeholder="Honda"
+                                placeholder="Đạp chân/Điện"
                                 className="input"
                             />
                         </label>

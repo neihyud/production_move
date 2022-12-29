@@ -2,6 +2,9 @@ const jwt = require('jsonwebtoken');
 const config = require('../config/index')
 const verifyToken = (req, res, next) => {
     const authHeader = req.header('Authorization')
+
+    if (!authHeader) return res.status(401).json({ success: false, message: 'Not log in' })
+
     const token = authHeader.split(' ')[1]
 
     // Unauthorized
