@@ -1,3 +1,6 @@
+.chartMain {
+    width: 300px;
+}
 
 @media screen and (max-width: 555px) {
     .chartMain {

@@ -11,7 +11,6 @@ const ModalProduct = ({
     typeAction,
     productLines,
 }) => {
-    console.log('productLIne modal: ', productLines);
     return (
         <div className="modal-product-line">
             <div onClick={toggleShowCreate} className="overlay"></div>

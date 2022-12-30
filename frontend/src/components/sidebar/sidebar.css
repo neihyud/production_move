@@ -110,6 +110,7 @@ a.active > li span {
     }
 
     .sidebar {
-        width: 70px;
+        flex: none;
     }
+
 }

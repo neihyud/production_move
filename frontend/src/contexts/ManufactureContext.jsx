@@ -171,7 +171,6 @@ const ManufactureContextProvider = ({ children }) => {
     const getProductLines = async () => {
         try {
             const { data = {} } = await axios.get(`${apiUrl}/common/productLine`);
-            console.log('productlins: ', data.productLines);
             if (data.success) {
                 dispatch({ type: GET_PRODUCTLINE, payload: data.productLines });
                 return data;

@@ -61,4 +61,15 @@ router.get('/common/productLine', commonController.getProductLines)
 router.get('/common/agent', commonController.getAgents)
 router.get('/common/warranty', commonController.getWarranties)
 
+// Statistical
+const commonStatisticalController = require('./controller/statistical')
+router.get('/admin/statistical', commonStatisticalController.getStatisticalAll)
+router.get('/admin/statistical/manufacture', commonStatisticalController.getStatisticalManufacture)
+router.get('/admin/statistical/agent', commonStatisticalController.getStatisticalAgent)
+router.get('/admin/statistical/warranty', commonStatisticalController.getStatisticalWarranty)
+router.get('/manufacture/statistical/productLine/manuf', commonStatisticalController.errorProductLineManufacture)
+router.get('/manufacture/statistical/productLine/agent', commonStatisticalController.errorProductLineAgent)
+router.get('/manufacture/statistical/sold', commonStatisticalController.getNumberSold)
+
+
 module.exports = router

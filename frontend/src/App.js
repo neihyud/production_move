@@ -36,10 +36,10 @@ function App() {
       break;
 
     default:
-      if (localStorage[LOCAL_STORAGE_TOKEN_NAME]) {
-        alert("You don't have access")
-        localStorage[LOCAL_STORAGE_TOKEN_NAME] = ''
-      }
+      // if (localStorage[LOCAL_STORAGE_TOKEN_NAME]) {
+      //   alert("You don't have access")
+      //   // localStorage[LOCAL_STORAGE_TOKEN_NAME] = ''
+      // }
       body = (
         <Routes>
           <Route path="/login" element={<Auth authRoute="login" />} />

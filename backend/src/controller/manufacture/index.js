@@ -1,6 +1,6 @@
 const Product = require('../../models/Product')
 const ProductDetail = require('../../models/ProductDetail')
-const Manufacture = require('../../models/Manufacturing')
+const Manufacture = require('../../models/Manufacture')
 
 const { STATUS_PRODUCT_AGENT, STATUS_PRODUCT_ERROR_FACTORY, STATUS_PRODUCT_NEW, STATUS_PRODUCT_ERROR_MANUFACTURE } = require('../../constants/index')
 const { default: mongoose } = require('mongoose')

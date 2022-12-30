@@ -140,8 +140,8 @@ export default function Products() {
 
         let { product } = await getProduct(code, row._id);
 
+        console.log(`product: `, product);
         let _price = product.price.split(' ')[0].replace(/\./g, '');
-        console.log(`product: ${product.price}  `, _price);
 
         setValue('id', row._id);
         setValue('productName', product.productName);
