@@ -37,7 +37,6 @@ module.exports = {
     //[PUT] /warranty/:code/product/export-agent
     exportToAgent: async (req, res) => {
         try {
-            const { code } = req.params
             const { productId } = req.body
             const product = await Product.findOne({ _id: productId }).lean()
             if (!product) {
@@ -46,8 +45,6 @@ module.exports = {
 
             await Product.updateOne({ _id: productId }, { status: STATUS_PRODUCT_WARRANTY_DONE, 'note.warranty_done': product.note.agent })
 
-            // const products = await Product.find({ 'note.new': code }).lean()
-            // const _products = validateProduct(products)
             res.status(200).json({ success: true, message: 'Export product to agent success', product: productId })
 
         } catch (error) {

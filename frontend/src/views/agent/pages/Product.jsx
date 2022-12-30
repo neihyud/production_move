@@ -16,10 +16,13 @@ import { useForm } from 'react-hook-form';
 import { AgentContext } from '../../../contexts/AgentContext';
 import { AuthContext } from '../../../contexts/AuthContext';
 import ModalExport from '../../../components/modal/ModalExport';
+import ModalAction from '../../../components/modal/ModalAction';
 
 const Product = () => {
     const [showExport, setShowExport] = useState(false);
     const [selected, setSelected] = useState([]);
+    const [showModal, setShowModal] = useState(false);
+    let idRef = React.useRef(0);
 
     const {
         authState: {
@@ -33,6 +36,7 @@ const Product = () => {
         getProducts,
         setLoading,
         createOrder,
+        exportToManufacture,
         agentState: { products, productLoading },
     } = useContext(AgentContext);
 
@@ -56,9 +60,19 @@ const Product = () => {
 
     const handleEditClick = (row) => async () => {
         console.log('agentId: ', row._id);
-        // setShowExport(!showExport);
+        setShowModal(!showModal);
+        idRef.current = row._id;
+        setValue('_id', row._id);
+    };
 
-        setValue('id', row._id);
+    const handleAction = async () => {
+        const { success, message } = await exportToManufacture(code, idRef.current);
+        setShowModal(false);
+        setShowToast({
+            show: true,
+            message,
+            type: success ? 'success' : 'danger',
+        });
     };
 
     const toggleShowExport = () => {
@@ -120,7 +134,7 @@ const Product = () => {
     const onSubmit = async (data) => {
         console.log('data: ', data);
 
-        const { success, message, error } = await createOrder(code, selected, data);
+        const { success, message } = await createOrder(code, selected, data);
 
         setShowExport(false);
         setShowToast({
@@ -158,6 +172,15 @@ const Product = () => {
         errors,
         onSubmit,
         title: 'Order',
+    };
+
+    const argsDone = {
+        title: 'Export To Manufacture',
+        body: 'Do you want to export to Manufacture',
+        setShowModal,
+        showModal,
+        isDone: true,
+        handleAction,
     };
     return (
         <div className="wrapper-body">
@@ -215,6 +238,7 @@ const Product = () => {
                     </ModalExport>
                 )}
 
+                {showModal && <ModalAction {...argsDone} />}
                 {body}
             </div>
             <Toast

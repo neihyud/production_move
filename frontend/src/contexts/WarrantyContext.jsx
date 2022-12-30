@@ -54,7 +54,7 @@ const WarrantyContextProvider = ({ children }) => {
         try {
             const { data = {} } = await axios.post(
                 `${apiUrl}/warranty/${code}/product/export-manufacture`,
-                {},
+                { productId },
             );
 
             console.log('data: ', data);

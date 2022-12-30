@@ -3,7 +3,7 @@ const Product = require('../../models/Product')
 const { STATUS_PRODUCT_AGENT,
     STATUS_PRODUCT_ERROR_WARRANTY,
     STATUS_PRODUCT_WARRANTY_DONE,
-    STATUS_PRODUCT_SOLD, STATUS_PRODUCT_FIXING, STATUS_PRODUCT_RETURN_CUSTOMER, STATUS_PRODUCT_ERROR_RECALL } = require('../../constants/index')
+    STATUS_PRODUCT_SOLD, STATUS_PRODUCT_FIXING, STATUS_PRODUCT_RETURN_CUSTOMER, STATUS_PRODUCT_ERROR_RECALL, STATUS_PRODUCT_RETURN_MANUFACTURE } = require('../../constants/index')
 
 const Order = require('../../models/Order')
 
@@ -85,11 +85,11 @@ module.exports = {
     getProductSold: async (req, res) => {
         try {
             const { code } = req.params
-            const products = await Product.find({ 'note.agent': code, status: { $ne: STATUS_PRODUCT_AGENT } }).lean()
+            const products = await Product.find({ 'note.agent': code, status: { $nin: [STATUS_PRODUCT_AGENT, STATUS_PRODUCT_RETURN_MANUFACTURE] } }).lean()
 
             // const _products = validateProduct(products)
             const _products = products.map((product) => {
-                const customerName = product.note.sold.customerName + ', ' + product.note.sold.phone
+                const customerName = product.note.sold?.customerName + ', ' + product.note.sold?.phone
                 const _note = product.status == STATUS_PRODUCT_SOLD ? customerName : product.note[product.status]
                 return {
                     ...product,
@@ -155,7 +155,7 @@ module.exports = {
             const products = await Product.find({ 'note.agent': code, status: STATUS_PRODUCT_ERROR_RECALL }).lean()
 
             const _products = products.map((product) => {
-                const customerName = product.note.sold.customerName + ', ' + product.note.sold.phone
+                const customerName = product.note.sold?.customerName + ', ' + product.note.sold?.phone
                 const _note = product.status == STATUS_PRODUCT_SOLD ? customerName : product.note[product.status]
                 return {
                     ...product,
@@ -221,10 +221,10 @@ module.exports = {
 
             const product = await Product.findOne({ _id: productId }).lean()
             if (!product) {
-                return res.status(400).json({ success: false, message: 'Product is exist' })
+                return res.status(400).json({ success: false, message: 'Product is not exist' })
             }
 
-            const infoCustomer = `${product.note.customerName}, ${product.note.phone}`
+            const infoCustomer = `${product.note.sold.customerName}, ${product.note.sold.phone}`
 
             await Product.updateOne({ _id: productId }, { status: STATUS_PRODUCT_RETURN_CUSTOMER, 'note.return_customer': infoCustomer }).lean()
 
@@ -234,7 +234,20 @@ module.exports = {
         } catch (error) {
             res.status(500).json({ success: false, message: 'Internal Error, Report To Admin', error })
         }
-    }
+    },
 
+    exportProductToManufacture: async (req, res) => {
+        try {
+            const { productId } = req.body
+            const product = await Product.findOne({ _id: productId }).lean()
+            if (!product) {
+                return res.status(400).json({ success: false, message: 'Product is not exist' })
+            }
+            const infoCustomer = `${product.note.sold?.customerName}, ${product.note.sold?.phone}`
+            await Product.updateOne({ _id: productId }, { status: STATUS_PRODUCT_RETURN_MANUFACTURE, 'note.return_customer': infoCustomer }).lean()
+        } catch (error) {
+            res.status(500).json({ success: false, message: 'Internal Error, Report To Admin', error })
+        }
+    }
 
 }

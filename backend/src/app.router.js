@@ -47,6 +47,7 @@ router.get('/agent/:code/product/recall', verifyToken, isRole(ROLE_AGENT), agent
 router.post('/agent/:code/product/recall/:productLine', verifyToken, isRole(ROLE_AGENT), agentController.productRecall)
 router.post('/agent/:code/product/recall/:productLine/:id', verifyToken, isRole(ROLE_AGENT), agentController.recallToWarranty)
 router.put('/agent/:code/product/warranty-done/export', verifyToken, isRole(ROLE_AGENT), agentController.exportProductToCustomer)
+router.put('/agent/:code/product/export', verifyToken, isRole(ROLE_AGENT), agentController.exportProductToManufacture)
 
 
 // Warranty

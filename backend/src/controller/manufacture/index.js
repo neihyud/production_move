@@ -2,7 +2,7 @@ const Product = require('../../models/Product')
 const ProductDetail = require('../../models/ProductDetail')
 const Manufacture = require('../../models/Manufacture')
 
-const { STATUS_PRODUCT_AGENT, STATUS_PRODUCT_ERROR_FACTORY, STATUS_PRODUCT_NEW, STATUS_PRODUCT_ERROR_MANUFACTURE } = require('../../constants/index')
+const { STATUS_PRODUCT_AGENT, STATUS_PRODUCT_ERROR_FACTORY, STATUS_PRODUCT_NEW, STATUS_PRODUCT_ERROR_MANUFACTURE, STATUS_PRODUCT_RETURN_MANUFACTURE } = require('../../constants/index')
 const { default: mongoose } = require('mongoose')
 
 const validateProduct = (products) => {
@@ -237,7 +237,7 @@ module.exports = {
         try {
             const { code } = req.params
 
-            const productError = await Product.find({ 'note.new': code, status: STATUS_PRODUCT_ERROR_MANUFACTURE }).lean()
+            const productError = await Product.find({ 'note.new': code, status: { $in: [STATUS_PRODUCT_ERROR_MANUFACTURE, STATUS_PRODUCT_RETURN_MANUFACTURE] } }).lean()
 
             const _products = validateProduct(productError)
             res.status(200).json({ success: true, message: 'Get error product success', products: _products })

@@ -308,6 +308,23 @@ const AgentContextProvider = ({ children }) => {
         }
     };
 
+    const exportToManufacture = async (code, productId) => {
+        try {
+            const { data = {} } = await axios.put(
+                `${apiUrl}/agent/${code}/product/export`,
+                { productId },
+            );
+            if (data.success) {
+                dispatch({ type: EXPORT_PRODUCT, payload: [productId] });
+                return data;
+            }
+        } catch (error) {
+            return error.response
+                ? error.response.data
+                : { success: false, message: 'Server error' };
+        }
+    };
+
     const setLoading = async () => {
         dispatch({ type: SET_LOADING });
     };
@@ -331,6 +348,7 @@ const AgentContextProvider = ({ children }) => {
         recallToWarranty,
         exportToCustomer,
         getProductRecall,
+        exportToManufacture,
     };
     return <AgentContext.Provider value={value}>{children}</AgentContext.Provider>;
 };

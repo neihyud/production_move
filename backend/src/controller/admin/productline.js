@@ -1,4 +1,3 @@
-const handleStatus = require('../../helpers/handleStatus');
 const ProductLine = require('../../models/ProductLine')
 
 module.exports = {

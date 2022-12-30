@@ -147,7 +147,7 @@ const Recall = () => {
                 {...{
                     columns,
                     rows: products,
-                    checkboxSelection: true,
+                    checkboxSelection: false,
                 }}
             />
         );

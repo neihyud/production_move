@@ -105,25 +105,24 @@ const Product = () => {
     ];
 
     const handleProductError = (row) => () => {
-        console.log('params', row);
+        idRef.current = row._id;
+        console.log('paramsError', row);
         setIsDone(false);
         setShowModal(!showModal);
-        idRef.current = row._id;
         console.log('Test');
     };
 
     const handleProductSuccess = (row) => () => {
+        idRef.current = row._id;
+        console.log('paramsSuccess', row);
         setIsDone(true);
         setShowModal(!showModal);
-        idRef.current = row._id;
     };
 
-    const handleAction = async (isDone) => {
-        const id = idRef.current;
-
-        const { success, message, error } = isDone
-            ? await exportToAgent(code, id)
-            : await exportToManufacture(code, id);
+    const handleAction = async () => {
+        const { success, message } = isDone
+            ? await exportToAgent(code, idRef.current)
+            : await exportToManufacture(code, idRef.current);
 
         setShowModal(false);
 

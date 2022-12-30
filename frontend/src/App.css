@@ -75,6 +75,10 @@ p {
     border-radius: 25px;
 }
 
+.main-statistical::-webkit-scrollbar {
+    display: none;
+}
+
 select option {
     text-transform: capitalize;
 }

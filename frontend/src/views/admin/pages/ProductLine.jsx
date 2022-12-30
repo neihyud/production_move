@@ -78,7 +78,7 @@ export default function Products() {
                     <GridActionsCellItem
                         icon={<DeleteIcon />}
                         label="Delete"
-                        onClick={handleDeleteClick(row._id)}
+                        onClick={handleDeleteClick(row)}
                         color="inherit"
                     />,
                 ];
@@ -87,19 +87,22 @@ export default function Products() {
     ];
 
     const handleEditClick = (row) => () => {
-        console.log(row._id);
         setShowCreate(!showCreate);
         setIsEdit(true);
 
+        setValue('_id', row._id);
         setValue('code', row.code);
         setValue('productLine', row.productLine);
         setValue('description', row.description);
     };
 
-    const handleDeleteClick = (id) => () => {
-        console.log(id);
+    const handleDeleteClick = (row) => () => {
         setShowModal(true);
-        idRef.current = id;
+        idRef.current = row._id;
+
+        setValue('code', row.code);
+        setValue('productLine', row.productLine);
+        setValue('description', row.description);
     };
 
     const handleDelete = async () => {

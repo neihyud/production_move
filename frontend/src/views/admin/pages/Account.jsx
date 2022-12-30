@@ -91,6 +91,7 @@ export default function Products() {
     };
 
     const handleDeleteClick = (id) => () => {
+        setValue('_id', id);
         setShowModal(true);
         idRef.current = id;
     };
