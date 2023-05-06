@@ -1,3 +1,4 @@
+- Link mô tả chi tiết
 https://itest.com.vn/lects/webappdev/mockproj/production-move.htm
 - BTL: phát triển ứng dụng web
 - Công nghệ: nodejs, mongodb, reactjs
